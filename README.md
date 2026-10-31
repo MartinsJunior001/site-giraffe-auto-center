@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# Página de vendas Giraffe
 
-## Getting Started
+Landing page em Next.js 16, React 19, TypeScript e Tailwind CSS 4 para a Giraffe Assessoria. O código principal está na branch `main`.
 
-First, run the development server:
+## Rodar localmente
 
 ```bash
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra http://localhost:3000. No Windows PowerShell, use `Copy-Item .env.example .env.local`. A página pode ser visualizada sem variáveis configuradas; o formulário informará que o envio está indisponível.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Configuração
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `NEXT_PUBLIC_SITE_URL`: domínio público confirmado, sem barra final.
+- `NEXT_PUBLIC_INDEXABLE`: mantenha `false` até aprovação para publicação.
+- `NEXT_PUBLIC_PRIVACY_URL`: URL pública da política aprovada, exigida para aceitar leads.
+- `LEAD_WEBHOOK_URL`: endpoint HTTPS que recebe POST JSON, apenas no servidor.
+- `LEAD_WEBHOOK_TOKEN`: token Bearer opcional, apenas no servidor.
 
-## Learn More
+O envio não grava dados localmente. Sem política e webhook, `/api/leads` responde 503. Não coloque tokens em variáveis `NEXT_PUBLIC_*`. O formulário preserva UTMs e URL de origem no payload.
 
-To learn more about Next.js, take a look at the following resources:
+Se houver uma camada `window.dataLayer` configurada, o formulário publica eventos de etapa, sucesso e erro sem dados pessoais. Nenhuma ferramenta de analytics é carregada por padrão.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Verificação
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npx tsc --noEmit
+npm run build
+```
 
-## Deploy on Vercel
+Não há suíte de testes ou comando de lint configurados no scaffold original. Veja [implementação](docs/IMPLEMENTATION.md), [conteúdo pendente](docs/CONTENT.md), [auditoria visual](docs/DESIGN.md) e [plano de movimento](docs/MOTION.md).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Publicação
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Não houve deploy. O `Dockerfile` produz um servidor standalone na porta 3000 para a futura configuração no Coolify. `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_INDEXABLE` e `NEXT_PUBLIC_PRIVACY_URL` são argumentos de build; `LEAD_WEBHOOK_URL` e `LEAD_WEBHOOK_TOKEN` devem ser definidos somente no ambiente de execução. Antes de publicar, confirme conteúdo, contatos, privacidade, integração de leads, imagens e provas sociais.
