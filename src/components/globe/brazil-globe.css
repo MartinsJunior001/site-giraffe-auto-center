@@ -1,0 +1,44 @@
+/* Globo interativo da seção "O que é a Giraffe" (no lugar da foto da coluna da direita).
+   O globo fica solto sobre o fundo da seção: sem cartão, moldura, sombra ou brilho embaixo. A área
+   mantém as medidas e a posição da antiga foto, então o globo não muda de tamanho nem de lugar
+   (a borda transparente preserva a área interna de 1 px a menos de cada lado). */
+
+.about-visual.about-visual-globe::before, .about-visual.about-visual-globe::after { content: none; }
+.about-media.about-media-globe { overflow: visible; border: 1px solid transparent; border-radius: 0; background: transparent; box-shadow: none; }
+
+.brazil-globe { position: absolute; inset: 0; border-radius: 16px; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+.brazil-globe:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; }
+
+/* Imagem estática do próprio globo, com fundo transparente: aparece até o desenho carregar (ou se ele não puder rodar). */
+.about-media-globe .brazil-globe-fallback { object-fit: contain; object-position: 50% 50%; transition: opacity .35s ease; }
+.brazil-globe.is-ready .brazil-globe-fallback { opacity: 0; }
+
+/* Arrastar na horizontal gira o globo; na vertical, a página continua rolando no celular.
+   A mãozinha aparece só sobre o globo (o script marca .is-over); no espaço vazio em volta, cursor normal. */
+.brazil-globe-canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; cursor: default; touch-action: pan-y; }
+/* Com zoom, o mapa aparece numa janela redonda do tamanho do globo, que some suavemente na borda:
+   o globo nunca vira um retângulo cortado. No zoom inicial ele fica inteiro dentro da parte opaca. */
+.brazil-globe-canvas {
+  -webkit-mask-image: radial-gradient(circle closest-side, #000 92%, transparent);
+  mask-image: radial-gradient(circle closest-side, #000 92%, transparent);
+}
+.brazil-globe-canvas.is-over { cursor: grab; }
+.brazil-globe-canvas.is-grabbing { cursor: grabbing; }
+.brazil-globe-canvas.is-point { cursor: pointer; }
+
+/* Pulso do ponto principal. A animação roda no CSS: com o globo parado, o canvas não redesenha nada.
+   O script só posiciona o elemento sobre o ponto (e o esconde quando o ponto vai para trás do globo). */
+.brazil-globe-pulse { position: absolute; top: 0; left: 0; z-index: 1; width: 0; height: 0; opacity: 0; pointer-events: none; }
+.brazil-globe-pulse::before { content: ""; position: absolute; top: -7px; left: -7px; width: 14px; height: 14px; box-sizing: border-box; border: 1.4px solid #fff; border-radius: 50%; opacity: 0; animation: brazil-globe-pulse 2.6s cubic-bezier(.25, .6, .4, 1) infinite; }
+@keyframes brazil-globe-pulse {
+  from { transform: scale(1); opacity: .55; }
+  to { transform: scale(2.6); opacity: 0; }
+}
+
+.brazil-globe-tip { position: absolute; top: 0; left: 0; z-index: 2; padding: 7px 11px; border-radius: 999px; background: rgba(17, 17, 17, .9); color: var(--white); font-size: 12px; font-weight: 500; line-height: 1; letter-spacing: -.005em; white-space: nowrap; pointer-events: none; opacity: 0; translate: -50% calc(-100% - 14px); transition: opacity .18s ease; }
+.brazil-globe-tip[data-show] { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .brazil-globe-fallback, .brazil-globe-tip { transition: none; }
+  .brazil-globe-pulse::before { animation: none; transform: scale(1.7); opacity: .3; }
+}

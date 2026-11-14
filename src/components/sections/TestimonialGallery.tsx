@@ -7,6 +7,16 @@ import { UiIcon } from "@/components/icons/UiIcon";
 
 const STAR_PATH = "m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9L12 2.6Z";
 
+// Player oficial do YouTube no modo de privacidade aprimorada (youtube-nocookie.com). Ele só é criado
+// depois do clique no card, então a reprodução começa sozinha, mas nunca ao carregar a página.
+// playsinline mantém o vídeo dentro do site no iPhone; rel=0 limita as sugestões ao próprio canal.
+// Às vezes o YouTube liga a legenda automática por cima da legenda gravada nos vídeos; nenhum parâmetro
+// da incorporação controla isso de forma confiável. Para evitar, desative a legenda automática dos Shorts
+// no YouTube Studio (o visitante também pode desligá-la no botão CC do player).
+function youtubeEmbedUrl(id: string) {
+  return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&playsinline=1&rel=0`;
+}
+
 function Stars({ rating }: { rating: number }) {
   return <span className="testimonial-stars" role="img" aria-label={`Avaliação: ${rating} de 5 estrelas`}>
     {Array.from({ length: 5 }, (_, index) => (
@@ -18,8 +28,8 @@ function Stars({ rating }: { rating: number }) {
 function CardContent({ testimonial }: { testimonial: Testimonial }) {
   return <>
     <span className="testimonial-media">
-      {testimonial.posterSrc ? <Image src={testimonial.posterSrc} alt="" fill sizes="(max-width: 760px) 78vw, (max-width: 1100px) 46vw, 23vw" /> : null}
-      {testimonial.videoSrc ? <span className="testimonial-play" aria-hidden="true"><UiIcon name="play" /></span> : null}
+      {testimonial.posterSrc ? <Image src={testimonial.posterSrc} alt="" fill sizes="(max-width: 760px) 78vw, (max-width: 1279px) 300px, 19vw" /> : null}
+      {testimonial.youtubeId ? <span className="testimonial-play" aria-hidden="true"><UiIcon name="play" /></span> : null}
     </span>
     <span className="testimonial-caption">
       <span className="testimonial-avatar">{testimonial.avatarSrc ? <Image src={testimonial.avatarSrc} alt="" fill sizes="56px" /> : null}</span>
@@ -39,7 +49,6 @@ function setPageScroll(overflow: string) {
 
 export function TestimonialGallery() {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const openerRef = useRef<HTMLButtonElement | null>(null);
   const previousOverflow = useRef("");
   const [active, setActive] = useState<Testimonial | null>(null);
@@ -60,8 +69,8 @@ export function TestimonialGallery() {
     dialogRef.current?.close();
   }
 
+  // Ao fechar, o player sai da página (o vídeo para) e o foco volta para o card.
   function handleClose() {
-    videoRef.current?.pause();
     setPageScroll(previousOverflow.current);
     setActive(null);
     openerRef.current?.focus();
@@ -69,7 +78,7 @@ export function TestimonialGallery() {
 
   return <>
     <div className="testimonial-gallery" role="region" aria-label="Depoimentos em vídeo" tabIndex={0}>
-      {testimonials.map((testimonial) => testimonial.videoSrc ? (
+      {testimonials.map((testimonial) => testimonial.youtubeId ? (
         <button key={testimonial.id} className="testimonial-card testimonial-card-ready" type="button" onClick={(event) => openVideo(testimonial, event.currentTarget)} aria-label={testimonial.name ? `Assistir depoimento em vídeo de ${testimonial.name}, ${testimonial.company}` : `Assistir ${testimonial.title.toLowerCase()} da ${testimonial.company}`} aria-describedby={testimonial.quote ? `${testimonial.id}-quote` : undefined}>
           <CardContent testimonial={testimonial} />
         </button>
@@ -82,11 +91,19 @@ export function TestimonialGallery() {
     <dialog ref={dialogRef} className="testimonial-dialog" aria-label="Depoimento em vídeo" onClose={handleClose} onClick={(event) => { if (event.target === event.currentTarget) closeVideo(); }}>
       <div className="testimonial-dialog-content">
         <button className="testimonial-dialog-close" type="button" onClick={closeVideo} aria-label="Fechar vídeo"><UiIcon name="close" /></button>
-        {active ? <>
-          <video ref={videoRef} key={active.id} src={active.videoSrc} poster={active.posterSrc} controls playsInline preload="metadata">
-            {active.captionsSrc ? <track kind="captions" src={active.captionsSrc} srcLang="pt-BR" label="Português" default /> : null}
-            Seu navegador não suporta a reprodução deste vídeo.
-          </video>
+        {active?.youtubeId ? <>
+          {/* A capa fica por baixo enquanto o player carrega; a moldura 9:16 tem tamanho fixo (sem saltos no layout). */}
+          <div className="testimonial-player">
+            {active.posterSrc ? <Image src={active.posterSrc} alt="" fill sizes="420px" /> : null}
+            <iframe
+              key={active.id}
+              src={youtubeEmbedUrl(active.youtubeId)}
+              title={`Depoimento em vídeo de ${active.name ?? active.title}, ${active.company}`}
+              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+              allowFullScreen
+              referrerPolicy="strict-origin-when-cross-origin"
+            />
+          </div>
           <p><strong>{active.name ?? active.title}</strong> <em>{active.company}</em></p>
         </> : null}
       </div>

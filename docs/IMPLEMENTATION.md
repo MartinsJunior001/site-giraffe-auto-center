@@ -44,11 +44,28 @@ O hero é uma apresentação cinematográfica da mesma oficina vista do alto (c�
 
 **Sequência de quadros (próxima fase):** criar outro componente de cena (por exemplo, `HeroFrames.tsx`, desenhando quadros num `<canvas>`) que implemente o mesmo `HeroSceneHandle`. Nele, `transition` devolve uma timeline que avança o índice do quadro, `set` desenha o quadro do estado e `ready` resolve quando os quadros do trecho estiverem carregados. Depois, basta trocar `HeroScene` por ele no `CinematicHero`. Gestos, textos, interfaces, progresso e acessibilidade continuam iguais.
 
+## Globo da seção "Sobre nós"
+
+A coluna da direita de "O que é a Giraffe" mostra um globo interativo no lugar da foto. Ele fica solto sobre o fundo branco da seção, sem cartão, moldura, sombra ou brilho embaixo, na mesma área e posição da foto.
+
+- Arquivos: `src/components/globe/BrazilGlobe.tsx` (componente), `globeRenderer.ts` (desenho e interação, sem React), `globeConfig.ts` (enquadramento, zoom, velocidade e pontos) e `brazil-globe.css`.
+- Técnica: projeção em perspectiva do d3-geo desenhada em `<canvas>` 2D, sem WebGL. O código (d3-geo e topojson-client) e os dados só são baixados quando a seção se aproxima da tela.
+- Dados: `public/data/globo-brasil.json`, com o mundo em 1:110m e a América do Sul em 1:50m (Natural Earth, domínio público, via world-atlas 2.0.2). O Brasil usa a cor de `--orange`.
+- Repouso: o globo não gira sozinho. Fica centralizado no Brasil e só se move enquanto a pessoa o arrasta, aproxima ou usa o teclado. Depois de 2,5 s sem interação, ele volta sozinho ao Brasil e ao zoom inicial. Com o cursor sobre o globo, a espera só começa quando o cursor sai. Com movimento reduzido, a volta é instantânea. O tempo de espera fica em `returnDelayMs`, em `globeConfig.ts`.
+- Interação: só o globo responde; o espaço vazio em volta dele não gira o globo nem dá zoom. Arrastar gira; com o cursor parado sobre o globo, a rolagem aproxima ou afasta (entre 0,88× e 2,4×). Quem está rolando a página e passa pelo globo continua rolando, e nos limites do zoom a página volta a rolar. Com zoom, o mapa aparece numa janela redonda do tamanho do globo, que some suavemente na borda. No celular, deslizar na horizontal gira, na vertical rola a página, e a pinça aproxima. Pelo teclado: setas giram, + e − aproximam, Home volta ao Brasil.
+- Desempenho: parado, o canvas não redesenha nada; o pulso do ponto principal é uma animação em CSS. A densidade de pixels fica limitada a 2, e o desenho pausa fora da tela e com a aba oculta.
+- Os 8 pontos e arcos são ilustrativos (sem clientes, cidades ou números). Para mudar, edite `points` em `globeConfig.ts`; o primeiro é o ponto principal.
+- Imagem estática: `public/images/sobre/globo-brasil.webp`, com fundo transparente, gerada a partir do próprio globo (quadrado do tamanho do menor lado da área). Aparece até o desenho carregar e fica no lugar se o JavaScript não rodar. Se o enquadramento mudar, gere a imagem de novo. O otimizador de imagens guarda cada versão por 4 horas e não tem como invalidar esse cache; para ver a imagem nova no `next dev`, apague `.next/dev/cache/images`.
+
 ## Depoimentos em vídeo
 
-A galeria tem quatro espaços 9:16: três com vídeo e um reservado. Sem arquivo configurado, o card mostra a área cinza da referência e não se apresenta como vídeo reproduzível. Para publicar um novo depoimento, coloque um MP4 vertical 1080×1920 em `public/videos-clientes/` e preencha `videoSrc` no item correspondente de `src/content/testimonials.ts`. Adicione `posterSrc` para a capa (as atuais ficam em `public/images/videos/`, extraídas do segundo 2 de cada vídeo) e `captionsSrc` para legendas WebVTT; os vídeos atuais já trazem legenda gravada na imagem. A faixa escura de cada card segue o modelo de avaliação: avatar (`avatarSrc`), estrelas (`rating`, opcional), nome (`name`), empresa e citação (`quote`). Sem `rating` as estrelas não aparecem; sem `name` o card mostra `title`. Em cards com menos de 280 px a citação ocupa a largura inteira, abaixo do avatar. Confirme a identificação e a autorização de cada cliente antes de ativar o card.
+A galeria mostra cinco Shorts publicados no canal da Giraffe no YouTube: Casa do Freio (João Romanine), Brava Serviços Automotivos, Giga Max Ribeirão Preto, Marcão Auto Center e RL Pneus e Oficina. Os cinco ficam sempre na mesma fileira: lado a lado a partir de 1280 px de largura; abaixo disso, a fileira vira um carrossel de arrastar com encaixe por card.
 
-Cards com vídeo abrem um modal nativo com controles, reprodução inline no celular, fechamento por Escape ou botão, retorno do foco ao card e bloqueio da rolagem de fundo. O arquivo de vídeo só é carregado ao abrir o modal. No celular, a galeria pode ser percorrida horizontalmente com encaixe por card.
+- Dados: `src/content/testimonials.ts`. Cada card tem `youtubeId` (o trecho depois de `/shorts/` no link), `posterSrc` (capa), `avatarSrc`, `name`, `company`, `rating` e `quote`. Mantenha a citação entre 79 e 86 caracteres para ocupar 3 linhas. Sem `youtubeId`, o card vira espaço reservado e não abre o player.
+- Capas e avatares ficam em `public/images/videos/`, servidos pelo próprio site. As capas da Brava, Giga Max, Marcão e RL Pneus são quadros dos vídeos; a da Casa do Freio é a miniatura oficial do Short. Nada é baixado do YouTube antes do clique.
+- Ao clicar, abre um modal com o player oficial do YouTube no modo de privacidade aprimorada (`youtube-nocookie.com`). O player só é criado nessa hora e começa a tocar sozinho. Ao fechar (botão no canto da tela, Escape ou clique fora), o player sai da página, o vídeo para e o foco volta ao card. A moldura 9:16 tem tamanho fixo, com a capa por baixo enquanto o player carrega.
+- O YouTube às vezes liga a legenda automática por cima da legenda gravada nos vídeos, e nenhum parâmetro da incorporação controla isso de forma confiável. Para evitar, desative a legenda automática desses Shorts no YouTube Studio.
+- Os arquivos MP4 antigos em `public/videos-clientes/` não são mais usados e ficam fora do repositório.
 
 ## Referências e limites
 

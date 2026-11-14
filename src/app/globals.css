@@ -86,8 +86,8 @@ button { cursor: pointer; }
 .split-heading { display: grid; grid-template-columns: minmax(0, 2fr) minmax(210px, 1fr); gap: 10%; align-items: end; }
 .split-heading > p { max-width: 335px; color: #555; line-height: 1.65; font-size: 16px; margin-bottom: 7px; }
 .cases .split-heading > p { font-weight: 500; }
-.cases { padding-bottom: 0; }
-.trusted { background: var(--surface); border-bottom: 1px solid var(--line); padding-bottom: clamp(80px,8vw,120px); }
+/* A faixa de clientes vem depois da seção branca de desafios: o mesmo espaço em cima e embaixo, com linha nas duas bordas. */
+.trusted { background: var(--surface); border-block: 1px solid var(--line); padding-block: clamp(80px,8vw,120px); }
 .trusted .section-label { justify-content: center; margin-bottom: 15px; }
 .trusted h2 { margin: 0 auto; text-align: center; text-wrap: balance; }
 .trusted-marquees { display: grid; gap: 18px; margin-top: 34px; }
@@ -162,7 +162,8 @@ button { cursor: pointer; }
 .ticker-index { font-family: var(--font-geist-mono); font-size: 11px; letter-spacing: .08em; color: #a0a0a0; }
 .ticker-arrow.ui-icon { width: 28px; height: 28px; color: var(--orange); }
 .benefit-ticker strong { grid-column: 1 / -1; color: #f1f1f1; font-family: var(--font-geist); font-size: clamp(20px,2.4vw,36px); font-weight: 600; line-height: 1; letter-spacing: -.06em; text-transform: uppercase; white-space: nowrap; }
-.testimonial-gallery { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: clamp(14px,1.8vw,28px); }
+/* Os cinco depoimentos ficam sempre na mesma fileira: lado a lado no desktop e em carrossel nas telas menores. */
+.testimonial-gallery { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: clamp(14px,1.8vw,28px); }
 .testimonial-card { container-type: inline-size; display: flex; min-width: 0; flex-direction: column; padding: 0; border: 0; border-radius: 15px; overflow: hidden; background: #2d2d2d; color: var(--white); text-align: left; }
 .testimonial-card-ready { cursor: pointer; }
 .testimonial-card-pending { cursor: default; }
@@ -183,12 +184,18 @@ button { cursor: pointer; }
 .testimonial-company { color: #dcdcdc; font-family: var(--font-geist-mono), monospace; font-size: 10px; font-weight: 700; line-height: 1.5; letter-spacing: .075em; text-transform: uppercase; }
 .testimonial-quote { display: -webkit-box; min-height: 4.5em; margin-top: 8px; overflow: hidden; color: #e2e2e2; font-size: 12.5px; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
 @container (max-width: 279px) { .testimonial-quote { grid-column: 1 / -1; } }
+/* Em cards estreitos (celulares de até ~380 px) uma citação pode precisar de uma 4ª linha; só ela cresce. */
+@container (max-width: 299px) { .testimonial-quote { -webkit-line-clamp: 4; line-clamp: 4; } }
 .testimonial-dialog { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: auto; padding: 12px; border: 0; background: transparent; color: var(--white); overflow: auto; }
 .testimonial-dialog[open] { display: grid; place-items: center; }
 .testimonial-dialog::backdrop { background: rgba(0,0,0,.86); backdrop-filter: blur(5px); }
 .testimonial-dialog-content { position: relative; width: min(420px,100%); margin: auto; }
-.testimonial-dialog video { display: block; width: 100%; max-height: calc(100dvh - 92px); aspect-ratio: 9 / 16; border-radius: 10px; background: var(--black); object-fit: contain; }
-.testimonial-dialog-close { position: absolute; z-index: 1; top: 10px; right: 10px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid rgba(255,255,255,.5); border-radius: 50%; background: rgba(0,0,0,.7); color: var(--white); }
+/* Player do YouTube no modal: moldura 9:16 fixa, que encolhe para caber na altura da tela. */
+.testimonial-player { position: relative; width: min(100%, calc((100dvh - 92px) * 9 / 16)); aspect-ratio: 9 / 16; margin-inline: auto; overflow: hidden; border-radius: 10px; background: var(--black); }
+.testimonial-player img { object-fit: cover; }
+.testimonial-player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+/* O botão de fechar fica no canto da tela, fora do player: o canto do vídeo tem os controles do YouTube. */
+.testimonial-dialog-close { position: fixed; z-index: 1; top: 14px; right: 14px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid rgba(255,255,255,.5); border-radius: 50%; background: rgba(0,0,0,.7); color: var(--white); }
 .testimonial-dialog-close .ui-icon { width: 24px; height: 24px; }
 .testimonial-dialog-content p { display: flex; flex-wrap: wrap; gap: 4px 8px; margin: 10px 0 0; font-family: var(--font-geist), Arial, sans-serif; font-size: 15px; font-weight: 500; line-height: 1.4; }
 .testimonial-dialog-content em { font-style: italic; }
@@ -208,17 +215,13 @@ button { cursor: pointer; }
 .button-light { background: #e0e0e0; color: var(--black); }
 .button-light:hover { background: #d4d4d4; }
 .button-light::after { opacity: .7; }
-.why-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 10%; }
-.why h2 { margin-bottom: 45px; }
-.why-grid ol { list-style: none; margin: 0; padding: 0; border-top: 1px solid #555; }
-.why-grid li { display: grid; grid-template-columns: 44px 1fr; gap: 18px; padding: 25px 0; border-bottom: 1px solid #555; font-size: clamp(16px,1.6vw,23px); line-height: 1.3; }
-.why-grid li span { font-family: var(--font-geist-mono); font-size: 11px; color: var(--orange); }
 /* Carrossel da equipe */
-.team-heading { display: flex; flex-direction: column; align-items: center; margin-top: clamp(80px,9vw,140px); text-align: center; }
+.team-heading { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .team-heading .section-label { justify-content: center; margin-bottom: 16px; }
-.team-heading p { max-width: 720px; margin: 18px 0 0; color: #bdbdbd; font-size: 16px; line-height: 1.6; }
-.section .team-heading h3 { max-width: 640px; margin: 0; font-size: clamp(28px,3vw,44px); font-weight: 500; line-height: 1.1; letter-spacing: -.04em; }
-.team-carousel { --card-w: clamp(176px, 16vw, 240px); --card-gap: clamp(14px,1.6vw,24px); --arc: clamp(10px, 1.1vw, 16px); position: relative; margin-top: 44px; overflow: hidden; }
+.team-heading p:not(.section-label) { max-width: 720px; margin: 18px 0 0; color: #bdbdbd; font-size: 16px; line-height: 1.6; }
+.section .team-heading h2 { max-width: 640px; margin: 0; font-size: clamp(28px,3vw,44px); font-weight: 500; line-height: 1.1; letter-spacing: -.04em; }
+/* O cartão em destaque começa 24 px abaixo do topo da faixa: 40 + 24 = 64 px, o mesmo espaço entre título e conteúdo das outras seções. */
+.team-carousel { --card-w: clamp(176px, 16vw, 240px); --card-gap: clamp(14px,1.6vw,24px); --arc: clamp(10px, 1.1vw, 16px); position: relative; margin-top: 40px; overflow: hidden; }
 .team-track { position: relative; height: calc(var(--card-w) * 1.25 * 1.04 + var(--arc) * 3 + 48px); margin: 0; padding: 0; list-style: none; }
 .team-card { position: absolute; z-index: calc(10 - var(--distance)); top: 50%; left: 50%; width: var(--card-w); aspect-ratio: 4 / 5; opacity: calc(1 - var(--distance) * .17); transform: translate(-50%, -50%) translateX(calc(var(--offset) * (var(--card-w) + var(--card-gap)))) translateY(calc((var(--distance) - 1.5) * var(--arc))) scale(.96); transition: transform .7s cubic-bezier(.22,.8,.24,1), opacity .7s; }
 .team-card.is-active { transform: translate(-50%, -50%) translateY(calc(-1.5 * var(--arc))) scale(1.04); }
@@ -243,8 +246,11 @@ button { cursor: pointer; }
 .team-track { touch-action: pan-y; user-select: none; }
 @media (max-width: 760px) {
   .desktop-break { display: none; }
-  .team-heading p { max-width: 600px; }
-  .team-carousel { --card-w: 58vw; --card-gap: 12px; --arc: 12px; margin-top: 32px; }
+  .team-heading p:not(.section-label) { max-width: 600px; }
+  /* No celular: 27 + 20 px até o cartão em destaque = 47 px, como nas outras seções. Sem os botões, a faixa
+     deixa ~26 px livres abaixo dos cartões (espaço do brilho), descontados do espaço de baixo da seção. */
+  .section.why { padding-bottom: calc(var(--section-space) - 26px); }
+  .team-carousel { --card-w: 58vw; --card-gap: 12px; --arc: 12px; margin-top: 27px; }
   .team-track { height: calc(var(--card-w) * 1.25 + var(--arc) * 2 + 28px); }
   .team-card { opacity: 1; transform: translate(-50%, -50%) translateX(calc(var(--offset) * (var(--card-w) + var(--card-gap)))) translateY(calc((var(--distance) - .5) * var(--arc))) scale(.96); }
   .team-card.is-active { transform: translate(-50%, -50%) translateY(calc(-.5 * var(--arc))) scale(1); }
@@ -380,13 +386,17 @@ button { cursor: pointer; }
 @media (max-width: 1300px) {
   .feature-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+@media (max-width: 1279px) {
+  /* Abaixo de 1280 px os 5 cards não cabem lado a lado: a mesma fileira vira um carrossel de arrastar. */
+  .testimonial-gallery { display: flex; margin-inline: calc(-1 * var(--gutter)); padding: 0 var(--gutter) 16px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; scrollbar-width: thin; }
+  .testimonial-card { flex: 0 0 clamp(240px, 27vw, 300px); scroll-snap-align: start; }
+}
 @media (max-width: 1100px) {
   .feature-grid-6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .desktop-nav { gap: 14px; }
   .header-actions { display: none; }
   .desktop-nav { margin-left: auto; }
-  .testimonial-gallery { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .benefit-grid,.why-grid { gap: 6%; }
+  .benefit-grid { gap: 6%; }
 }
 @media (max-width: 900px) {
   .benefit-ticker { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -409,7 +419,7 @@ button { cursor: pointer; }
   .mobile-nav a { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #444; font-size: 23px; }
   .mobile-nav .ui-icon { width: 21px; height: 21px; }
   .mobile-nav .mobile-diagnosis { position: relative; isolation: isolate; overflow: hidden; margin-top: 15px; padding: 13px; background: var(--orange) linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,0) 58%); color: var(--white); font-size: 15px; font-weight: 700; box-shadow: 0 8px 26px rgba(255,100,0,.42); }
-  .split-heading,.benefit-grid,.why-grid,.faq-grid,.diagnosis-grid { grid-template-columns: 1fr; gap: 28px; }
+  .split-heading,.benefit-grid,.faq-grid,.diagnosis-grid { grid-template-columns: 1fr; gap: 28px; }
   .trusted-marquees { gap: 14px; margin-top: 28px; }
   .trusted-marquee { --logo-size: clamp(89.6px,24.8vw,99.2px); --logo-gap: 14px; }
   .section-heading { margin-bottom: 40px; }
@@ -421,7 +431,6 @@ button { cursor: pointer; }
   .benefit-ticker strong { font-size: clamp(16px,4.5vw,24px); }
   .testimonial-gallery { display: flex; gap: 14px; margin-inline: calc(-1 * var(--gutter)); padding: 0 var(--gutter) 16px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; scrollbar-width: thin; }
   .testimonial-card { flex: 0 0 min(78vw,310px); scroll-snap-align: start; }
-  .why-grid ol { margin-top: 30px; }
   .diagnosis-aside { margin-top: 40px; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .footer-grid > div:first-child { grid-column: 1 / -1; }

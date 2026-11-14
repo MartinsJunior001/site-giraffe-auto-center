@@ -1,9 +1,10 @@
 import Image from "next/image";
-import { aboutFacts, benefits, differences, faqs, journey, pains, solutions, type FeatureCard } from "@/content/site";
+import { aboutFacts, benefits, faqs, journey, pains, solutions, type FeatureCard } from "@/content/site";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { TestimonialGallery } from "@/components/sections/TestimonialGallery";
 import { TeamCarousel } from "@/components/sections/TeamCarousel";
 import { UiIcon } from "@/components/icons/UiIcon";
+import { BrazilGlobe } from "@/components/globe/BrazilGlobe";
 
 function SectionLabel({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
   return <p className={`section-label ${light ? "section-label-light" : ""}`}><span className="label-line" aria-hidden="true"></span>{children}</p>;
@@ -75,7 +76,7 @@ export function About() {
   return <section id="sobre" className="section section-light about"><div className="container about-grid">
     <ScrollReveal className="about-copy">
       <SectionLabel>SOBRE NÓS</SectionLabel>
-      <h2>O que é a <em>Giraffe Assessoria</em></h2>
+      <h2>O que é a <em>Giraffe</em></h2>
       <p className="about-tagline">Uma assessoria de marketing especializada em acelerar o processo de vendas de empresas do setor automotivo.</p>
       <p className="about-lead">Nossa experiência foi construída ao lado de oficinas e centros automotivos de todo o Brasil, com <strong>processos sólidos e estratégias validadas em milhares de anúncios</strong>, focadas em atrair mais clientes e gerar resultados.</p>
       <dl className="about-facts">
@@ -83,8 +84,8 @@ export function About() {
       </dl>
       <a className="button button-orange about-cta" href="#diagnostico">Quero saber como vender mais <UiIcon name="up-right" /></a>
     </ScrollReveal>
-    <ScrollReveal className="about-visual">
-      <figure className="about-media"><Image src="/images/sobre/oficina-em-movimento.jpg" alt="Ilustração de um centro automotivo movimentado, com recepção ao cliente e carros em atendimento" fill sizes="(max-width: 900px) 92vw, 45vw" /></figure>
+    <ScrollReveal className="about-visual about-visual-globe">
+      <figure className="about-media about-media-globe"><BrazilGlobe /></figure>
     </ScrollReveal>
   </div></section>;
 }
@@ -128,9 +129,10 @@ export function Solutions() {
   return <section id="solucoes" className="section section-light solutions"><div className="container"><ScrollReveal><div className="section-heading split-heading"><div><SectionLabel>SOLUÇÕES</SectionLabel><h2>As soluções certas para cada etapa do crescimento da sua empresa.</h2></div><p>A combinação de serviços é definida de acordo com o diagnóstico e com o que for contratado.</p></div></ScrollReveal><FeatureCards items={solutions} label="Soluções da Giraffe" /></div></section>;
 }
 
+// Seção da equipe: título e carrossel com as pessoas da Giraffe.
 export function WhyGiraffe() {
-  return <section className="section section-dark why"><div className="container why-grid"><div><SectionLabel light>POR QUE A GIRAFFE</SectionLabel><h2>Mais do que marketing. <em>Uma visão do crescimento da sua oficina.</em></h2><a className="button button-orange" href="#diagnostico">Solicitar diagnóstico <UiIcon name="up-right" /></a></div><ol>{differences.map((item, i) => <li key={item}><span>0{i + 1}</span>{item}</li>)}</ol></div>
-    <div className="container team-heading"><SectionLabel light>NOSSA EQUIPE</SectionLabel><h3>Pessoas que entendem o dia a dia da sua oficina.</h3><p>Nossa equipe é treinada e especializada no setor automotivo, com conhecimento<br className="desktop-break" /> das necessidades de oficinas mecânicas e centros automotivos para desenvolver estratégias<br className="desktop-break" /> que geram resultados.</p></div>
+  return <section className="section section-dark why">
+    <div className="container team-heading"><SectionLabel light>NOSSA EQUIPE</SectionLabel><h2>Pessoas que entendem o dia a dia da sua oficina.</h2><p>Nossa equipe é treinada e especializada no setor automotivo, com conhecimento<br className="desktop-break" /> das necessidades de oficinas mecânicas e centros automotivos para desenvolver estratégias<br className="desktop-break" /> que geram resultados.</p></div>
     <TeamCarousel />
   </section>;
 }

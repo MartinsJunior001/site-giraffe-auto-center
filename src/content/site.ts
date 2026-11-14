@@ -39,14 +39,6 @@ export const solutions: FeatureCard[] = [
   { title: "Indicadores e relatórios", text: "Entender os resultados com mais clareza.", tag: "Resultados", image: "/images/cards/solucao-indicadores.jpg", alt: "Dono da oficina e consultor analisando gráficos em um monitor", cta: "Ver meus resultados" },
 ];
 
-export const differences = [
-  "Familiaridade com o segmento automotivo.",
-  "Visão integrada de marketing e atendimento.",
-  "Estratégias adaptadas à realidade do negócio.",
-  "Acompanhamento orientado por indicadores.",
-  "Comunicação clara e consultiva.",
-];
-
 // Seção "Sobre nós". Números informados pela Giraffe (material institucional enviado em 13/11/2026).
 export const aboutFacts = [
   { value: "+120 mi", label: "em vendas para clientes" },
