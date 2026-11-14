@@ -53,6 +53,8 @@ export function DiagnosisForm() {
   const stepRef = useRef<HTMLDivElement>(null);
   const stepChanged = useRef(false);
   const openedAt = useRef(0);
+  // Identificador deste envio: o mesmo em novas tentativas, para o servidor e a planilha não duplicarem o lead.
+  const leadId = useRef("");
   const previousOverflow = useRef("");
   const [lead, setLead] = useState<Lead>(initial);
   const [step, setStep] = useState(1);
@@ -119,9 +121,10 @@ export function DiagnosisForm() {
     setStatus("loading");
     setMessage("");
     const params = new URLSearchParams(window.location.search);
+    if (!leadId.current) leadId.current = crypto.randomUUID();
     const attribution = Object.fromEntries(["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"].map(key => [key, params.get(key) ?? ""]));
     try {
-      const response = await fetch("/api/leads", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...lead, consent: true, attribution, landingPage: window.location.href, website: honeypot.current?.value ?? "", elapsedMs: Date.now() - openedAt.current }) });
+      const response = await fetch("/api/leads", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...lead, leadId: leadId.current, consent: true, attribution, landingPage: window.location.href, website: honeypot.current?.value ?? "", elapsedMs: Date.now() - openedAt.current }) });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.message || "Não foi possível enviar agora. Tente novamente em instantes.");
       trackEvent("lead_submit_success");

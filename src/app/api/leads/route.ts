@@ -3,12 +3,27 @@ import { sendLead, validateLead } from "@/lib/lead-service";
 
 // Modo de teste: só no `next dev` e só enquanto LEAD_WEBHOOK_URL não estiver configurado.
 // Valida os dados normalmente, não envia para lugar nenhum e responde sucesso para permitir testar o fluxo até /obrigado.
-// Em produção (next build/start) este atalho não existe: sem webhook e sem a política de privacidade completa
-// (src/content/privacy.ts), a rota responde 503 e nenhum dado é recebido.
 const devTestMode = process.env.NODE_ENV === "development" && !process.env.LEAD_WEBHOOK_URL;
 
+// Em produção, sem a política de privacidade completa (src/content/privacy.ts) a rota responde 503 e nenhum dado é
+// recebido. No `next dev` a trava não se aplica, para permitir o teste real com o webhook antes da publicação.
+const privacyBlocked = process.env.NODE_ENV === "production" && !privacyPolicyComplete;
+
+// Proteção contra envios duplicados: cada abertura do formulário gera um leadId. Um leadId já gravado não é
+// reenviado (a rota confirma de novo), e um envio em andamento com o mesmo leadId não é repetido.
+// Fica na memória do servidor (uma instância); o Make pode conferir o leadId na planilha como segunda barreira.
+const DUPLICATE_WINDOW_MS = 30 * 60 * 1000;
+const delivered = new Map<string, number>();
+const inFlight = new Set<string>();
+
+function rememberDelivered(leadId: string) {
+  const now = Date.now();
+  for (const [id, at] of delivered) if (now - at > DUPLICATE_WINDOW_MS) delivered.delete(id);
+  delivered.set(leadId, now);
+}
+
 export async function POST(request: Request) {
-  if (!devTestMode && !privacyPolicyComplete) return Response.json({ message: "O canal de diagnóstico aguarda a política de privacidade e a configuração de recebimento." }, { status: 503 });
+  if (privacyBlocked) return Response.json({ message: "O canal de diagnóstico aguarda a política de privacidade e a configuração de recebimento." }, { status: 503 });
   if (Number(request.headers.get("content-length") ?? 0) > 10000) return Response.json({ message: "Dados inválidos." }, { status: 413 });
   let payload: unknown;
   try { payload = await request.json(); } catch { return Response.json({ message: "Dados inválidos." }, { status: 400 }); }
@@ -18,12 +33,24 @@ export async function POST(request: Request) {
     console.info(`[leads] modo de teste: formulário válido (função: ${payload.role}, faturamento: ${payload.revenue}); nada foi enviado porque LEAD_WEBHOOK_URL não está configurado.`);
     return Response.json({ ok: true, test: true });
   }
+
+  const { leadId } = payload;
+  const deliveredAt = delivered.get(leadId);
+  if (deliveredAt && Date.now() - deliveredAt <= DUPLICATE_WINDOW_MS) return Response.json({ ok: true, duplicate: true });
+  if (inFlight.has(leadId)) return Response.json({ message: "Seu envio já está sendo processado. Aguarde um instante." }, { status: 409 });
+
+  inFlight.add(leadId);
   try {
     const result = await sendLead(payload);
+    if (result.ok) {
+      rememberDelivered(leadId);
+      return Response.json({ ok: true });
+    }
     if (result.unavailable) return Response.json({ message: "O envio ainda não está configurado. Tente novamente quando o canal de atendimento estiver disponível." }, { status: 503 });
-    if (!result.ok) return Response.json({ message: "Não foi possível enviar agora. Tente novamente mais tarde." }, { status: 502 });
-    return Response.json({ ok: true });
-  } catch {
-    return Response.json({ message: "Não foi possível enviar agora. Tente novamente mais tarde." }, { status: 502 });
+    // Só o motivo técnico vai para o log: sem dados pessoais e sem a URL do webhook.
+    console.error(`[leads] o webhook não confirmou o registro (${result.reason}); lead ${leadId.slice(0, 8)}`);
+    return Response.json({ message: "Não foi possível enviar agora. Tente novamente em instantes." }, { status: 502 });
+  } finally {
+    inFlight.delete(leadId);
   }
 }

@@ -16,8 +16,8 @@ Abra http://localhost:3000. No Windows PowerShell, use `Copy-Item .env.example .
 
 - `NEXT_PUBLIC_SITE_URL`: domínio público confirmado, sem barra final.
 - `NEXT_PUBLIC_INDEXABLE`: mantenha `false` até aprovação para publicação.
-- `LEAD_WEBHOOK_URL`: endpoint HTTPS que recebe POST JSON, apenas no servidor.
-- `LEAD_WEBHOOK_TOKEN`: token Bearer opcional, apenas no servidor.
+- `LEAD_WEBHOOK_URL`: URL HTTPS do webhook do Make que grava os leads no Google Sheets, apenas no servidor.
+- `LEAD_WEBHOOK_TOKEN`: chave de API do webhook do Make (cabeçalho `x-make-apikey`), apenas no servidor.
 
 O envio não grava dados localmente. Sem webhook ou com a política de privacidade incompleta, `/api/leads` responde 503. Não coloque tokens em variáveis `NEXT_PUBLIC_*`. O formulário preserva UTMs e URL de origem no payload.
 
@@ -31,7 +31,7 @@ npx tsc --noEmit
 npm run build
 ```
 
-O lint usa a configuração oficial do Next.js (`eslint.config.mjs`). Não há suíte de testes. Veja [implementação](docs/IMPLEMENTATION.md), [conteúdo pendente](docs/CONTENT.md), [auditoria visual](docs/DESIGN.md) e [plano de movimento](docs/MOTION.md).
+O lint usa a configuração oficial do Next.js (`eslint.config.mjs`). Não há suíte de testes. Veja [implementação](docs/IMPLEMENTATION.md), [integração com Make e Google Sheets](docs/INTEGRACAO-MAKE.md), [conteúdo pendente](docs/CONTENT.md), [auditoria visual](docs/DESIGN.md) e [plano de movimento](docs/MOTION.md).
 
 ## Publicação
 
