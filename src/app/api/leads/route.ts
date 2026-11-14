@@ -1,12 +1,14 @@
+import { privacyPolicyComplete } from "@/content/privacy";
 import { sendLead, validateLead } from "@/lib/lead-service";
 
 // Modo de teste: só no `next dev` e só enquanto LEAD_WEBHOOK_URL não estiver configurado.
 // Valida os dados normalmente, não envia para lugar nenhum e responde sucesso para permitir testar o fluxo até /obrigado.
-// Em produção (next build/start) este atalho não existe: sem webhook e política, a rota responde 503.
+// Em produção (next build/start) este atalho não existe: sem webhook e sem a política de privacidade completa
+// (src/content/privacy.ts), a rota responde 503 e nenhum dado é recebido.
 const devTestMode = process.env.NODE_ENV === "development" && !process.env.LEAD_WEBHOOK_URL;
 
 export async function POST(request: Request) {
-  if (!devTestMode && !process.env.NEXT_PUBLIC_PRIVACY_URL) return Response.json({ message: "O canal de diagnóstico aguarda a política de privacidade e a configuração de recebimento." }, { status: 503 });
+  if (!devTestMode && !privacyPolicyComplete) return Response.json({ message: "O canal de diagnóstico aguarda a política de privacidade e a configuração de recebimento." }, { status: 503 });
   if (Number(request.headers.get("content-length") ?? 0) > 10000) return Response.json({ message: "Dados inválidos." }, { status: 413 });
   let payload: unknown;
   try { payload = await request.json(); } catch { return Response.json({ message: "Dados inválidos." }, { status: 400 }); }

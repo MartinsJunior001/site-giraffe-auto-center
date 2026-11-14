@@ -28,13 +28,11 @@ export const giraffeWebsite = "https://giraffeassessoria.com.br";
 export const whatsappNumber = "5516996227258";
 export const whatsappMessage = "Olá! Acabei de preencher o diagnóstico no site da Giraffe e quero falar com um especialista.";
 
-// Vídeo de boas-vindas: arquivo em public/ (ex.: "/videos/boas-vindas.mp4"), capa opcional
-// e vertical: true para vídeos em pé (9:16). Enquanto src estiver vazio, aparece um espaço reservado.
-// PROVISÓRIO: depoimento da Giga Max até chegar o vídeo de boas-vindas oficial.
+// Vídeo de boas-vindas (opcional): arquivo em public/ (ex.: "/videos/boas-vindas.mp4"), capa opcional
+// e vertical: true para vídeos em pé (9:16). Com src vazio (situação atual), a página de obrigado mostra
+// só a confirmação e o botão do WhatsApp, sem vídeo e sem redirecionamento automático.
 export const thankYouVideo: { src: string; poster?: string; vertical?: boolean } = {
-  src: "/videos-clientes/giga.max.ribeirão.preto.mp4",
-  poster: "/images/videos/giga-max-ribeirao-preto.jpg",
-  vertical: true,
+  src: "",
 };
 
 export const whatsappSiteMessage = "Olá! Vim pelo site da Giraffe e quero saber mais sobre a assessoria.";

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UiIcon } from "@/components/icons/UiIcon";
 import { revenueOptions, roleOptions, thankYouPath } from "@/content/diagnosis";
+import { privacyPolicyPath } from "@/content/privacy";
 import { trackEvent } from "@/lib/analytics";
 
 type Lead = { role: string; revenue: string; name: string; email: string; phone: string; company: string };
@@ -132,7 +133,6 @@ export function DiagnosisForm() {
     }
   }
 
-  const privacyUrl = process.env.NEXT_PUBLIC_PRIVACY_URL;
 
   return <>
     <button className="button button-orange diagnosis-card-button" type="button" onClick={() => open("card")} aria-haspopup="dialog">Quero meu diagnóstico <UiIcon name="up-right" /></button>
@@ -174,7 +174,7 @@ export function DiagnosisForm() {
           </div>
           {status === "error" ? <p className="lead-error" role="alert">{message}</p> : null}
         </form>
-        <p className="lead-footnote">Seus dados serão usados apenas para a equipe da Giraffe entrar em contato com você sobre nossos serviços.{privacyUrl ? <> Veja nossa <a href={privacyUrl} target="_blank" rel="noopener noreferrer">Política de Privacidade</a>.</> : null}</p>
+        <p className="lead-footnote">Seus dados serão usados apenas para a equipe da Giraffe entrar em contato com você sobre nossos serviços. Veja nossa <a href={privacyPolicyPath} target="_blank" rel="noopener">Política de Privacidade</a>.</p>
       </div>
     </dialog>
   </>;

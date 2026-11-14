@@ -1,4 +1,6 @@
 ﻿import Image from "next/image";
+import Link from "next/link";
+import { privacyPolicyPath } from "@/content/privacy";
 import { siteName } from "@/content/site";
 
 export function Footer() {
@@ -31,13 +33,7 @@ export function Footer() {
       </div>
       <div className="container footer-bottom">
         <span>© {siteName}</span>
-        {process.env.NEXT_PUBLIC_PRIVACY_URL ? (
-          <a href={process.env.NEXT_PUBLIC_PRIVACY_URL} target="_blank" rel="noopener noreferrer">
-            Política de privacidade
-          </a>
-        ) : (
-          <span>Política de privacidade e dados da empresa pendentes de confirmação.</span>
-        )}
+        <Link href={privacyPolicyPath}>Política de privacidade</Link>
       </div>
     </footer>
   );
