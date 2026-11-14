@@ -33,9 +33,9 @@ type PrivacyPolicy = {
 
 export const privacyPolicy: PrivacyPolicy = {
   updatedAt: "",
-  legalName: "",
-  cnpj: "",
-  contactEmail: "",
+  legalName: "Giraffe Marketing LTDA",
+  cnpj: "40.160.836/0001-78",
+  contactEmail: "contato@giraffeassessoria.com.br",
   leadDestination: "",
   retention: "",
   legalBasis: "",
