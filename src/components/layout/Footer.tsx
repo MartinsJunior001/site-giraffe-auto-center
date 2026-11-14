@@ -21,7 +21,6 @@ export function Footer() {
         <div>
           <span className="label">NAVEGAÇÃO</span>
           <a href="#solucoes">Soluções</a>
-          <a href="#metodo">Método</a>
           <a href="#faq">Perguntas frequentes</a>
           <a href="#diagnostico">Diagnóstico</a>
         </div>

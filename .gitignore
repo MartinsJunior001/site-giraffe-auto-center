@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+# logs e capturas das ferramentas de teste no navegador
+.playwright-mcp/
 
 # next.js
 /.next/

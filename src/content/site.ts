@@ -3,17 +3,21 @@ export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
 export const navigation = [
   { label: "Início", href: "#inicio" },
+  { label: "Sobre", href: "#sobre" },
   { label: "Soluções", href: "#solucoes" },
   { label: "Cases", href: "#cases" },
-  { label: "Método", href: "#metodo" },
   { label: "FAQ", href: "#faq" },
 ];
 
-export const pains = [
-  { title: "Agenda irregular", text: "Dias de movimento intenso seguidos por espaços vazios difíceis de prever." },
-  { title: "Contato que some", text: "A pessoa pergunta o preço, mas a conversa não evolui até o agendamento." },
-  { title: "Anúncios sem clareza", text: "O investimento acontece, mas o caminho entre contato e venda continua nebuloso." },
-  { title: "Oportunidade perdida", text: "Sem acompanhamento, bons contatos acabam ficando para depois." },
+// Cartões das seções de desafios e soluções: tag (rótulo mono), imagem e texto do botão.
+// Todos os botões abrem o formulário de diagnóstico (#diagnostico).
+export type FeatureCard = { title: string; text: string; tag: string; image: string; alt: string; cta: string };
+
+export const pains: FeatureCard[] = [
+  { title: "Agenda irregular", text: "Tem semana cheia e outras sem movimento.", tag: "Movimento", image: "/images/cards/desafio-agenda.jpg", alt: "Oficina com boxes vazios e mecânico esperando clientes", cta: "Encher minha agenda" },
+  { title: "Contatos que não fecham", text: "Muitos orçamentos sem retorno.", tag: "Conversão", image: "/images/cards/desafio-orcamentos.jpg", alt: "Atendente olhando um orçamento enquanto o cliente vai embora", cta: "Fechar orçamentos" },
+  { title: "Investimento sem clareza", text: "Não sabe o que funciona e desperdiça dinheiro.", tag: "Investimento", image: "/images/cards/desafio-investimento.jpg", alt: "Dono de oficina preocupado olhando o notebook e notas fiscais", cta: "Investir com clareza" },
+  { title: "Oportunidades perdidas", text: "Clientes que não voltam e indicações que não acontecem.", tag: "Relacionamento", image: "/images/cards/desafio-oportunidades.jpg", alt: "Carro saindo da oficina ao entardecer", cta: "Recuperar clientes" },
 ];
 
 export const benefits = [
@@ -26,20 +30,13 @@ export const benefits = [
 
 export const journey = ["Atrair", "Atender", "Converter", "Acompanhar"];
 
-export const method = [
-  { title: "Diagnosticar", text: "Entender o negócio e identificar gargalos." },
-  { title: "Atrair", text: "Desenvolver estratégias de captação." },
-  { title: "Converter", text: "Melhorar a jornada comercial e acompanhar cada contato." },
-  { title: "Otimizar", text: "Analisar indicadores e aperfeiçoar as ações." },
-];
-
-export const solutions = [
-  { title: "Tráfego pago", text: "Alcançar potenciais clientes na região." },
-  { title: "Redes sociais", text: "Fortalecer presença e confiança." },
-  { title: "Sites e landing pages", text: "Transformar visitas em oportunidades." },
-  { title: "CRM e organização comercial", text: "Acompanhar contatos e negociações." },
-  { title: "Automação de atendimento", text: "Agilizar processos quando contratada e integrada." },
-  { title: "Indicadores e relatórios", text: "Entender os resultados com mais clareza." },
+export const solutions: FeatureCard[] = [
+  { title: "Tráfego pago", text: "Alcançar potenciais clientes na região.", tag: "Atrair", image: "/images/cards/solucao-trafego.jpg", alt: "Celular mostrando um anúncio de serviço automotivo", cta: "Atrair mais clientes" },
+  { title: "Redes sociais", text: "Fortalecer presença e confiança.", tag: "Presença", image: "/images/cards/solucao-redes.jpg", alt: "Mecânico gravando um vídeo do serviço com o celular", cta: "Fortalecer minha marca" },
+  { title: "Sites e landing pages", text: "Transformar visitas em oportunidades.", tag: "Conversão", image: "/images/cards/solucao-sites.jpg", alt: "Notebook no balcão da oficina mostrando um site", cta: "Ter um site que vende" },
+  { title: "CRM e organização comercial", text: "Acompanhar contatos e negociações.", tag: "Organização", image: "/images/cards/solucao-crm.jpg", alt: "Atendente organizando clientes em um tablet na recepção", cta: "Organizar meu comercial" },
+  { title: "Automação de atendimento", text: "Agilizar processos quando contratada e integrada.", tag: "Atendimento", image: "/images/cards/solucao-automacao.jpg", alt: "Celular com conversa de atendimento sobre o balcão da oficina", cta: "Agilizar o atendimento" },
+  { title: "Indicadores e relatórios", text: "Entender os resultados com mais clareza.", tag: "Resultados", image: "/images/cards/solucao-indicadores.jpg", alt: "Dono da oficina e consultor analisando gráficos em um monitor", cta: "Ver meus resultados" },
 ];
 
 export const differences = [
@@ -48,6 +45,33 @@ export const differences = [
   "Estratégias adaptadas à realidade do negócio.",
   "Acompanhamento orientado por indicadores.",
   "Comunicação clara e consultiva.",
+];
+
+// Seção "Sobre nós". Números informados pela Giraffe (material institucional enviado em 13/11/2026).
+export const aboutFacts = [
+  { value: "+120 mi", label: "em vendas para clientes" },
+  { value: "+120", label: "clientes ativos" },
+  { value: "+2.354", label: "serviços prestados" },
+  { value: "+9 mi", label: "investidos em anúncios" },
+] as const;
+
+// Carrossel da equipe (seção "Por que a Giraffe"). Fotos recortadas em retrato 4:5 (800×1000)
+// em public/images/equipe/, a partir dos originais em public/images/nossa-equipe/.
+// Para incluir alguém, acrescente um item; sem foto, o cartão mostra uma silhueta.
+// Não usar rostos gerados por IA como se fossem a equipe.
+export type TeamMember = { name: string; role: string; photo?: string };
+
+export const team: TeamMember[] = [
+  { name: "Martins Junior", role: "CEO e Fundador", photo: "/images/equipe/martins-junior.jpg" },
+  { name: "Alex Martins", role: "COO e Sócio-Proprietário", photo: "/images/equipe/alex-martins.jpg" },
+  { name: "Daine Silva", role: "CFO", photo: "/images/equipe/daine-silva.jpg" },
+  { name: "Jhennipher Martins", role: "Customer Success", photo: "/images/equipe/jhennipher-martins.jpg" },
+  { name: "Hiago Henrique", role: "Gestor de Tráfego", photo: "/images/equipe/hiago-henrique.jpg" },
+  { name: "Matheus Aurélio", role: "Web Designer", photo: "/images/equipe/matheus.jpg" },
+  { name: "Naiara Silva", role: "Designer", photo: "/images/equipe/naiara-silva.jpg" },
+  { name: "João Pedro", role: "Designer", photo: "/images/equipe/joao-pedro.jpg" },
+  { name: "Richard Martins", role: "Designer", photo: "/images/equipe/richard-martins.jpg" },
+  { name: "Ryan Barbosa", role: "Videomaker", photo: "/images/equipe/ryan-barbosa.jpg" },
 ];
 
 export const faqs = [

@@ -1,4 +1,4 @@
-﻿# Página de vendas Giraffe
+# Página de vendas Giraffe
 
 Landing page em Next.js 16, React 19, TypeScript e Tailwind CSS 4 para a Giraffe Assessoria. O código principal está na branch `main`.
 
@@ -10,7 +10,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Abra http://localhost:3000. No Windows PowerShell, use `Copy-Item .env.example .env.local`. A página pode ser visualizada sem variáveis configuradas; o formulário informará que o envio está indisponível.
+Abra http://localhost:3000. No Windows PowerShell, use `Copy-Item .env.example .env.local`. A página pode ser visualizada sem variáveis configuradas; o formulário de diagnóstico (modal de 4 etapas) informará que o envio está indisponível. Com envio bem-sucedido, a pessoa é levada a `/obrigado`.
 
 ## Configuração
 
@@ -27,11 +27,12 @@ Se houver uma camada `window.dataLayer` configurada, o formulário publica event
 ## Verificação
 
 ```bash
+npm run lint
 npx tsc --noEmit
 npm run build
 ```
 
-Não há suíte de testes ou comando de lint configurados no scaffold original. Veja [implementação](docs/IMPLEMENTATION.md), [conteúdo pendente](docs/CONTENT.md), [auditoria visual](docs/DESIGN.md) e [plano de movimento](docs/MOTION.md).
+O lint usa a configuração oficial do Next.js (`eslint.config.mjs`). Não há suíte de testes. Veja [implementação](docs/IMPLEMENTATION.md), [conteúdo pendente](docs/CONTENT.md), [auditoria visual](docs/DESIGN.md) e [plano de movimento](docs/MOTION.md).
 
 ## Publicação
 
