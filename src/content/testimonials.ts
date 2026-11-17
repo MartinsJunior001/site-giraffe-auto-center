@@ -20,17 +20,6 @@ export type Testimonial = {
 // Mantenha cada citação entre 79 e 86 caracteres: é o que ocupa 3 linhas no card em desktop e celular.
 export const testimonials: Testimonial[] = [
   {
-    id: "casa-do-freio-araraquara",
-    title: "Depoimento do cliente",
-    name: "João Romanine",
-    company: "Casa do Freio",
-    quote: "Carro não falta, tem de sobra. Já estamos com a segunda unidade. O pessoal é fera.",
-    rating: 5,
-    avatarSrc: "/images/videos/avatar-casa-do-freio.jpg",
-    youtubeId: "G0hQ0EXTIdI",
-    posterSrc: "/images/videos/casa-do-freio-araraquara.jpg",
-  },
-  {
     id: "brava-servicos-automotivos",
     title: "Depoimento do cliente",
     name: "Pedro",
@@ -40,6 +29,17 @@ export const testimonials: Testimonial[] = [
     avatarSrc: "/images/videos/avatar-brava.jpg",
     youtubeId: "MC_IpRe0u7E",
     posterSrc: "/images/videos/brava-servicos-automotivos.jpg",
+  },
+  {
+    id: "marcao-auto-center-presidente-prudente",
+    title: "Depoimento do cliente",
+    name: "Marcão",
+    company: "Marcão Auto Center",
+    quote: "Não me arrependo um minuto. É loja cheia todo dia, não tem errado. Eu recomendo.",
+    rating: 5,
+    avatarSrc: "/images/videos/avatar-marcao.jpg",
+    youtubeId: "XX69-SNlI_c",
+    posterSrc: "/images/videos/marcao-auto-center-presidente-prudente.jpg",
   },
   {
     id: "giga-max-ribeirao-preto",
@@ -53,15 +53,15 @@ export const testimonials: Testimonial[] = [
     posterSrc: "/images/videos/giga-max-ribeirao-preto.jpg",
   },
   {
-    id: "marcao-auto-center-presidente-prudente",
+    id: "casa-do-freio-araraquara",
     title: "Depoimento do cliente",
-    name: "Marcão",
-    company: "Marcão Auto Center",
-    quote: "Não me arrependo um minuto. É loja cheia todo dia, não tem errado. Eu recomendo.",
+    name: "João Romanine",
+    company: "Casa do Freio",
+    quote: "Carro não falta, tem de sobra. Já estamos com a segunda unidade. O pessoal é fera.",
     rating: 5,
-    avatarSrc: "/images/videos/avatar-marcao.jpg",
-    youtubeId: "XX69-SNlI_c",
-    posterSrc: "/images/videos/marcao-auto-center-presidente-prudente.jpg",
+    avatarSrc: "/images/videos/avatar-casa-do-freio.jpg",
+    youtubeId: "G0hQ0EXTIdI",
+    posterSrc: "/images/videos/casa-do-freio-araraquara.jpg",
   },
   {
     id: "rl-pneus-e-oficina",
