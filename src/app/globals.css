@@ -444,8 +444,13 @@ button { cursor: pointer; }
   .split-heading > p { max-width: 100%; }
   .benefit-list { margin-top: 40px; }
   .benefit-ticker { margin-top: 70px; }
-  .benefit-ticker li { min-height: 124px; padding: 18px 16px 22px; }
-  .benefit-ticker strong { font-size: clamp(16px,4.5vw,24px); }
+  .benefit-ticker { grid-template-columns: 1fr; }
+  .benefit-ticker li { grid-template-columns: auto 1fr auto; grid-template-areas: "index stage icon"; align-items: center; column-gap: 18px; min-height: 0; padding: 22px 16px; border-right: 0; border-bottom: 1px solid #4c4c4c; }
+  .benefit-ticker li:last-child { border-bottom: 0; }
+  .ticker-index { grid-area: index; }
+  .ticker-arrow.ui-icon { grid-area: icon; }
+  .benefit-ticker li:not(:last-child) .ticker-arrow { transform: rotate(90deg); }
+  .benefit-ticker strong { grid-area: stage; grid-column: auto; font-size: clamp(24px,7vw,32px); }
   .testimonial-gallery { display: flex; gap: 14px; margin-inline: calc(-1 * var(--gutter)); padding: 0 var(--gutter) 16px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; scrollbar-width: thin; }
   .testimonial-card { flex: 0 0 min(78vw,310px); scroll-snap-align: start; }
   .diagnosis-aside { margin-top: 40px; }

@@ -116,7 +116,7 @@ export function Benefits() {
       <div className="benefit-list">{benefits.map((benefit, i) => <div key={benefit} className="benefit-item"><span>0{i + 1}</span><p>{benefit}</p></div>)}</div>
     </div>
     <ol className="benefit-ticker" aria-label="Jornada comercial">
-      {journey.map((stage, i) => <li key={stage}><span className="ticker-index">0{i + 1}</span>{i < journey.length - 1 ? <UiIcon name="right" className="ticker-arrow" /> : null}<strong>{stage}</strong></li>)}
+      {journey.map((stage, i) => <li key={stage}><span className="ticker-index">0{i + 1}</span><UiIcon name={i < journey.length - 1 ? "right" : "cycle"} className="ticker-arrow" /><strong>{stage}</strong></li>)}
     </ol>
   </section>;
 }
