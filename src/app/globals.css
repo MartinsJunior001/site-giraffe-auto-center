@@ -334,7 +334,7 @@ button { cursor: pointer; }
 .lead-submit { flex: 1; }
 .lead-error { margin: 16px 0 0; padding: 12px 14px; border-radius: 8px; background: #fff1eb; color: #8a2700; font-size: 13px; line-height: 1.5; }
 .lead-footnote { margin: 22px 0 0; color: #888; font-size: 12px; line-height: 1.5; text-align: center; }
-.lead-footnote a { text-decoration: underline; text-underline-offset: 3px; }
+.lead-footnote a,.lead-error a { text-decoration: underline; text-underline-offset: 3px; }
 .trap,.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* Página de obrigado */

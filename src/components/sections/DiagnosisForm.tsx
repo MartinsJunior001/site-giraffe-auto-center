@@ -3,9 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UiIcon } from "@/components/icons/UiIcon";
-import { revenueOptions, roleOptions, thankYouPath } from "@/content/diagnosis";
-import { privacyPolicyPath } from "@/content/privacy";
+import { revenueOptions, roleOptions, thankYouPath, whatsappUrl } from "@/content/diagnosis";
+import { privacyPolicyComplete, privacyPolicyPath } from "@/content/privacy";
 import { trackEvent } from "@/lib/analytics";
+
+// Em produção, enquanto a política de privacidade não estiver completa (src/content/privacy.ts, que inclui o destino
+// dos contatos), o formulário não envia nada: o visitante vê um aviso de indisponibilidade e nenhum dado sai do navegador.
+// A rota /api/leads mantém a mesma trava no servidor. No `next dev` o fluxo continua testável.
+const submissionsEnabled = process.env.NODE_ENV !== "production" || privacyPolicyComplete;
+const whatsappLink = whatsappUrl();
 
 type Lead = { role: string; revenue: string; name: string; email: string; phone: string; company: string };
 const initial: Lead = { role: "", revenue: "", name: "", email: "", phone: "", company: "" };
@@ -58,7 +64,7 @@ export function DiagnosisForm() {
   const previousOverflow = useRef("");
   const [lead, setLead] = useState<Lead>(initial);
   const [step, setStep] = useState(1);
-  const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "error" | "unavailable">("idle");
   const [message, setMessage] = useState("");
 
   useEffect(() => () => {
@@ -117,6 +123,7 @@ export function DiagnosisForm() {
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!submissionsEnabled) { setStatus("unavailable"); trackEvent("lead_submit_unavailable"); return; }
     if (step === 3) { goTo(4); return; }
     setStatus("loading");
     setMessage("");
@@ -176,6 +183,10 @@ export function DiagnosisForm() {
             </> : null}
           </div>
           {status === "error" ? <p className="lead-error" role="alert">{message}</p> : null}
+          {status === "unavailable" ? <p className="lead-error" role="alert">
+            O envio pelo formulário está temporariamente indisponível e seus dados não foram enviados.
+            {whatsappLink ? <> Enquanto isso, fale com a equipe da Giraffe pelo <a href={whatsappLink} target="_blank" rel="noopener noreferrer">WhatsApp</a>.</> : null}
+          </p> : null}
         </form>
         <p className="lead-footnote">Seus dados serão usados apenas para a equipe da Giraffe entrar em contato com você sobre nossos serviços. Veja nossa <a href={privacyPolicyPath} target="_blank" rel="noopener">Política de Privacidade</a>.</p>
       </div>
