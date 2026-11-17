@@ -121,7 +121,7 @@
 .ch-step.is-active::before { background: var(--orange); }
 .ch-step:focus-visible, .ch-skip:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; }
 /* Nunca quebra linha; a área de toque cresce para cima, sem desalinhar o texto da base. */
-.ch-skip { flex: none; padding: 16px 0 8px; border: 0; background: none; color: rgba(255, 255, 255, 0.72); font-family: var(--font-geist-mono), monospace; font-size: 12px; letter-spacing: 0.08em; text-decoration: underline; text-transform: uppercase; text-underline-offset: 4px; white-space: nowrap; cursor: pointer; transition: color 0.2s; }
+.ch-skip { flex: none; padding: 16px 0 8px; border: 0; background: none; color: rgba(255, 255, 255, 0.72); font-family: var(--font-geist-mono), monospace; font-size: 7.2px; letter-spacing: 0.08em; text-decoration: underline; text-transform: uppercase; text-underline-offset: 2.4px; white-space: nowrap; cursor: pointer; transition: color 0.2s; }
 .ch-skip:hover { color: var(--white); }
 
 /* Dica de rolagem (só no estado 0). */
@@ -181,7 +181,7 @@
 }
 @media (max-width: 340px) {
   .ch-bar { gap: 12px; }
-  .ch-skip { font-size: 11px; letter-spacing: 0.06em; }
+  .ch-skip { font-size: 6.6px; letter-spacing: 0.06em; }
 }
 
 /* Celular deitado e telas baixas: tudo menor para caber na altura da tela. */
