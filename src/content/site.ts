@@ -43,7 +43,7 @@ export const solutions: FeatureCard[] = [
 // investimento em anúncios atualizado para +20 mi em 18/11/2026).
 export const aboutFacts = [
   { value: "+120 mi", label: "em vendas para clientes" },
-  { value: "+120", label: "clientes ativos" },
+  { value: "+50", label: "clientes ativos" },
   { value: "+2.354", label: "serviços prestados" },
   { value: "+20 mi", label: "investidos em anúncios" },
 ] as const;
