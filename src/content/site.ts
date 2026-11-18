@@ -39,12 +39,13 @@ export const solutions: FeatureCard[] = [
   { title: "Indicadores e relatórios", text: "Entender os resultados com mais clareza.", tag: "Resultados", image: "/images/cards/solucao-indicadores.jpg", alt: "Dono da oficina e consultor analisando gráficos em um monitor", cta: "Ver meus resultados" },
 ];
 
-// Seção "Sobre nós". Números informados pela Giraffe (material institucional enviado em 13/11/2026).
+// Seção "Sobre nós". Números informados pela Giraffe (material institucional enviado em 13/11/2026;
+// investimento em anúncios atualizado para +20 mi em 18/11/2026).
 export const aboutFacts = [
   { value: "+120 mi", label: "em vendas para clientes" },
   { value: "+120", label: "clientes ativos" },
   { value: "+2.354", label: "serviços prestados" },
-  { value: "+9 mi", label: "investidos em anúncios" },
+  { value: "+20 mi", label: "investidos em anúncios" },
 ] as const;
 
 // Carrossel da equipe (seção "Por que a Giraffe"). Fotos recortadas em retrato 4:5 (800×1000)
