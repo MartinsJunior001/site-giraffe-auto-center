@@ -28,7 +28,7 @@ function Stars({ rating }: { rating: number }) {
 function CardContent({ testimonial }: { testimonial: Testimonial }) {
   return <>
     <span className="testimonial-media">
-      {testimonial.posterSrc ? <Image src={testimonial.posterSrc} alt="" fill sizes="(max-width: 760px) 78vw, (max-width: 1279px) 300px, 19vw" /> : null}
+      {testimonial.posterSrc ? <Image src={testimonial.posterSrc} alt="" fill sizes="(max-width: 760px) 78vw, (max-width: 1439px) 300px, 16vw" /> : null}
       {testimonial.youtubeId ? <span className="testimonial-play" aria-hidden="true"><UiIcon name="play" /></span> : null}
     </span>
     <span className="testimonial-caption">

@@ -13,7 +13,7 @@ export type Testimonial = {
 
 // Vídeos publicados no canal da Giraffe no YouTube. O player oficial só é carregado quando o visitante
 // clica no card; até lá, nada é baixado do YouTube.
-// Capas e avatares ficam em public/images/videos: as capas da Brava, Giga Max, Marcão e RL Pneus são quadros
+// Capas e avatares ficam em public/images/videos: as capas da Brava, Giga Max, Marcão, RL Pneus e Gigante Pneus são quadros
 // dos próprios vídeos; a da Casa do Freio é a miniatura oficial do Short.
 // Os cards sem youtubeId permanecem como espaços reservados e não abrem o player.
 // As citações são trechos condensados das falas legendadas nos próprios vídeos.
@@ -73,5 +73,16 @@ export const testimonials: Testimonial[] = [
     avatarSrc: "/images/videos/avatar-rl-pneus.jpg",
     youtubeId: "Sp8-OCWHF-0",
     posterSrc: "/images/videos/rl-pneus-e-oficina-pocos-de-caldas.jpg",
+  },
+  {
+    id: "gigante-pneus-sao-vicente",
+    title: "Depoimento do cliente",
+    name: "Junior",
+    company: "Gigante Pneus São Vicente",
+    quote: "Faturamento de 20% a 30% a mais e em torno de 40% mais leads. Eu recomendo muito.",
+    rating: 5,
+    avatarSrc: "/images/videos/avatar-gigante-pneus.jpg",
+    youtubeId: "6k3hmLvwtLM",
+    posterSrc: "/images/videos/gigante-pneus-sao-vicente.jpg",
   },
 ];

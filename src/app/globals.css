@@ -162,8 +162,8 @@ button { cursor: pointer; }
 .ticker-index { font-family: var(--font-geist-mono); font-size: 11px; letter-spacing: .08em; color: #a0a0a0; }
 .ticker-arrow.ui-icon { width: 28px; height: 28px; color: var(--orange); }
 .benefit-ticker strong { grid-column: 1 / -1; color: #f1f1f1; font-family: var(--font-geist); font-size: clamp(20px,2.4vw,36px); font-weight: 600; line-height: 1; letter-spacing: -.06em; text-transform: uppercase; white-space: nowrap; }
-/* Os cinco depoimentos ficam sempre na mesma fileira: lado a lado no desktop e em carrossel nas telas menores. */
-.testimonial-gallery { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: clamp(14px,1.8vw,28px); }
+/* Os seis depoimentos ficam sempre na mesma fileira: lado a lado no desktop e em carrossel nas telas menores. */
+.testimonial-gallery { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: clamp(12px,1.25vw,24px); }
 .testimonial-card { position: relative; container-type: inline-size; display: flex; min-width: 0; flex-direction: column; padding: 0; border: 0; border-radius: 15px; overflow: hidden; background: #2d2d2d; color: var(--white); text-align: left; }
 .testimonial-card-ready { cursor: pointer; }
 .testimonial-card-pending { cursor: default; }
@@ -184,6 +184,8 @@ button { cursor: pointer; }
 .testimonial-company { color: #dcdcdc; font-family: var(--font-geist-mono), monospace; font-size: 10px; font-weight: 700; line-height: 1.5; letter-spacing: .075em; text-transform: uppercase; }
 .testimonial-quote { display: -webkit-box; min-height: 4.5em; margin-top: 8px; overflow: hidden; color: #e2e2e2; font-size: 12.5px; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
 @container (max-width: 279px) { .testimonial-quote { grid-column: 1 / -1; } }
+/* Com seis cards lado a lado (telas de 1440 px) o card fica com ~200 px: o nome diminui um pouco para caber numa palavra só. */
+@container (max-width: 215px) { .testimonial-name { font-size: 17px; } }
 /* Em cards estreitos (celulares de até ~380 px) uma citação pode precisar de uma 4ª linha; só ela cresce. */
 @container (max-width: 299px) { .testimonial-quote { -webkit-line-clamp: 4; line-clamp: 4; } }
 .testimonial-dialog { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: auto; padding: 12px; border: 0; background: transparent; color: var(--white); overflow: auto; }
@@ -403,8 +405,8 @@ button { cursor: pointer; }
 @media (max-width: 1300px) {
   .feature-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 1279px) {
-  /* Abaixo de 1280 px os 5 cards não cabem lado a lado: a mesma fileira vira um carrossel de arrastar. */
+@media (max-width: 1439px) {
+  /* Abaixo de 1440 px os 6 cards não cabem lado a lado: a mesma fileira vira um carrossel de arrastar. */
   .testimonial-gallery { display: flex; margin-inline: calc(-1 * var(--gutter)); padding: 0 var(--gutter) 16px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; scrollbar-width: thin; }
   .testimonial-card { flex: 0 0 clamp(240px, 27vw, 300px); scroll-snap-align: start; }
 }
