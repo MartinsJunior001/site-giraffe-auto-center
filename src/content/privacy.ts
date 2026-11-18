@@ -32,8 +32,8 @@ type PrivacyPolicy = {
 };
 
 export const privacyPolicy: PrivacyPolicy = {
-  // PENDENTE DE APROVAÇÃO (Giraffe / revisão jurídica): com estes quatro campos preenchidos o formulário passa a
-  // aceitar envios em produção. updatedAt deve ser a data efetiva da publicação.
+  // Textos aprovados pela Giraffe em 18/11/2026. Com updatedAt, leadDestination, retention e legalBasis preenchidos,
+  // o formulário aceita envios em produção. Ao mudar a política, atualize updatedAt.
   updatedAt: "18 de novembro de 2026",
   legalName: "Giraffe Marketing LTDA",
   cnpj: "40.160.836/0001-78",
