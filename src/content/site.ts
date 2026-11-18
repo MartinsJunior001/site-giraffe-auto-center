@@ -55,7 +55,7 @@ export type TeamMember = { name: string; role: string; photo?: string };
 
 export const team: TeamMember[] = [
   { name: "Martins Junior", role: "CEO e Fundador", photo: "/images/equipe/martins-junior.jpg" },
-  { name: "Alex Martins", role: "COO e Sócio-Proprietário", photo: "/images/equipe/alex-martins.jpg" },
+  { name: "Alex Martins", role: "COO e Sócio Proprietário", photo: "/images/equipe/alex-martins.jpg" },
   { name: "Daine Silva", role: "CFO", photo: "/images/equipe/daine-silva.jpg" },
   { name: "Jhennipher Martins", role: "Customer Success", photo: "/images/equipe/jhennipher-martins.jpg" },
   { name: "Hiago Henrique", role: "Gestor de Tráfego", photo: "/images/equipe/hiago-henrique.jpg" },
