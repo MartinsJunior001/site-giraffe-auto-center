@@ -231,7 +231,7 @@ test("origem: UTMs e página completas, sem corte", () => {
 test("comentário: com o mapeamento completo, não repete dados pessoais", () => {
   const summary = buildPipefySummary(lead, realIds);
   for (const personal of ["Ana", lead.email, "99622", "Oficina Exemplo", "R$40"]) assert.ok(!summary.includes(personal), `comentário repete: ${personal}`);
-  for (const piece of ["17/11/2026", "Consentimento", lead.leadId]) assert.ok(summary.includes(piece), `comentário sem: ${piece}`);
+  for (const piece of ["17/11/2026", "Solicitação de contato", lead.leadId]) assert.ok(summary.includes(piece), `comentário sem: ${piece}`);
 });
 
 test("comentário: dado sem campo no mapeamento vai para o comentário (nada se perde)", () => {

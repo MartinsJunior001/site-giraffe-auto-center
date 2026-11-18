@@ -84,7 +84,7 @@ if (phase === "pipe-errado") {
     ]) assert.ok(q.includes(piece), `faltou ${piece}`);
     assert.ok(!q.includes("id_do_envio_leadid"), "não usa o campo de ID automático");
     assert.equal(state.comments.length, 1);
-    for (const piece of [first.leadId, "Consentimento"]) assert.ok(state.comments[0].includes(piece), `comentário sem ${piece}`);
+    for (const piece of [first.leadId, "Solicitação de contato"]) assert.ok(state.comments[0].includes(piece), `comentário sem ${piece}`);
     for (const personal of ["Cliente Teste", "e2e@oficina.test", "99622", "Oficina E2E"]) assert.ok(!state.comments[0].includes(personal), `comentário repete ${personal}`);
   });
   await check("Todos os 13 valores de papel e faturamento são aceitos e traduzidos", async () => {

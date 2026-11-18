@@ -45,7 +45,7 @@ export function buildPipefyCard(lead: LeadForPipefy, ids: PipefyFieldIds): { tit
 }
 
 /**
- * Comentário do card: registra quando e como o lead chegou (data, aceite e ID do envio), sem repetir dados pessoais
+ * Comentário do card: registra quando e como o lead chegou (data, solicitação de contato e ID do envio), sem repetir dados pessoais
  * que já estão nos campos. Um dado só entra aqui se o mapeamento não tiver campo para ele, para nada se perder.
  */
 export function buildPipefySummary(lead: LeadForPipefy, ids: PipefyFieldIds) {
@@ -59,7 +59,7 @@ export function buildPipefySummary(lead: LeadForPipefy, ids: PipefyFieldIds) {
   return [
     "Lead recebido pelo formulário de diagnóstico do site Giraffe Assessoria.",
     `Enviado em: ${local} (horário de Brasília)`,
-    "Consentimento: o visitante aceitou o contato no formulário.",
+    "Solicitação de contato: o visitante pediu o contato da Giraffe pelo formulário do site.",
     ...(ids.leadId ? [`ID do envio: ${lead.leadId}`] : []),
     ...missing,
   ].join("\n");
