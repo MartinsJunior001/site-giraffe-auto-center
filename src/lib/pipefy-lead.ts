@@ -9,10 +9,9 @@ function isPipefyError(error: unknown): error is PipefyError {
 
 export type LeadForPipefy = {
   leadId: string;
-  /** Texto da opção de papel exatamente como está no campo do Pipefy. */
+  /** Textos das opções exatamente como estão no Pipefy (traduzidos em src/content/pipefy.ts). */
   roleOption: string;
-  roleLabel: string;
-  revenueLabel: string;
+  revenueOption: string;
   name: string; email: string; phone: string; company: string;
   landingPage: string;
   utm: { source: string; medium: string; campaign: string; content: string; term: string };
@@ -24,12 +23,13 @@ export function pipefyPhone(phone: string) {
   return `+55${phone.replace(/\D/g, "")}`;
 }
 
-function originText(lead: LeadForPipefy) {
-  const utm = Object.entries(lead.utm).filter(([, value]) => value).map(([key, value]) => `utm_${key}=${value}`);
-  return [...utm, `página=${lead.landingPage}`].join(" | ");
+/** Origem completa, uma informação por linha, sem cortes (o campo do Pipefy é texto longo). */
+export function originText(lead: LeadForPipefy) {
+  const utm = Object.entries(lead.utm).filter(([, value]) => value).map(([key, value]) => `utm_${key}: ${value}`);
+  return [...(utm.length ? utm : ["Sem parâmetros UTM no link de acesso"]), `Página: ${lead.landingPage}`].join("\n");
 }
 
-/** Card com os quatro campos do formulário inicial e, se houver campos no Pipefy para eles, os dados complementares. */
+/** Card com os campos do formulário inicial. Papel, nome, e-mail e WhatsApp são obrigatórios no mapeamento; os demais entram se tiverem ID. */
 export function buildPipefyCard(lead: LeadForPipefy, ids: PipefyFieldIds): { title: string; fields: PipefyFieldValue[] } {
   const fields: PipefyFieldValue[] = [
     { field_id: ids.role, field_value: lead.roleOption },
@@ -38,32 +38,30 @@ export function buildPipefyCard(lead: LeadForPipefy, ids: PipefyFieldIds): { tit
     { field_id: ids.phone, field_value: pipefyPhone(lead.phone) },
   ];
   if (ids.company) fields.push({ field_id: ids.company, field_value: lead.company });
-  if (ids.revenue) fields.push({ field_id: ids.revenue, field_value: lead.revenueLabel });
-  if (ids.origin) fields.push({ field_id: ids.origin, field_value: originText(lead).slice(0, 255) });
+  if (ids.revenue) fields.push({ field_id: ids.revenue, field_value: lead.revenueOption });
+  if (ids.origin) fields.push({ field_id: ids.origin, field_value: originText(lead) });
   if (ids.leadId) fields.push({ field_id: ids.leadId, field_value: lead.leadId });
   return { title: `${lead.company} · ${lead.name}`.slice(0, 255), fields };
 }
 
 /**
- * Comentário com tudo o que o formulário coletou. O formulário inicial do Pipefy só tem papel, nome, e-mail e WhatsApp;
- * o comentário guarda no card a oficina, o faturamento, a origem (UTMs e página) e o ID do envio, sem descartar nada.
+ * Comentário do card: registra quando e como o lead chegou (data, aceite e ID do envio), sem repetir dados pessoais
+ * que já estão nos campos. Um dado só entra aqui se o mapeamento não tiver campo para ele, para nada se perder.
  */
-export function buildPipefySummary(lead: LeadForPipefy) {
+export function buildPipefySummary(lead: LeadForPipefy, ids: PipefyFieldIds) {
   const local = lead.submittedAt.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
-  const utm = Object.entries(lead.utm).map(([key, value]) => `utm_${key}: ${value || "-"}`);
+  const missing = [
+    !ids.company && `Oficina: ${lead.company}`,
+    !ids.revenue && `Faturamento mensal: ${lead.revenueOption}`,
+    !ids.origin && `Origem:\n${originText(lead)}`,
+    !ids.leadId && `ID do envio: ${lead.leadId}`,
+  ].filter(Boolean);
   return [
-    "Lead do site Giraffe Assessoria (formulário de diagnóstico)",
-    `Oficina: ${lead.company}`,
-    `Papel: ${lead.roleLabel}`,
-    `Faturamento mensal: ${lead.revenueLabel}`,
-    `Nome: ${lead.name}`,
-    `E-mail: ${lead.email}`,
-    `WhatsApp: ${lead.phone}`,
-    ...utm,
-    `Página: ${lead.landingPage}`,
+    "Lead recebido pelo formulário de diagnóstico do site Giraffe Assessoria.",
     `Enviado em: ${local} (horário de Brasília)`,
-    `ID do envio: ${lead.leadId}`,
-    "Consentimento: aceito no formulário",
+    "Consentimento: o visitante aceitou o contato no formulário.",
+    ...(ids.leadId ? [`ID do envio: ${lead.leadId}`] : []),
+    ...missing,
   ].join("\n");
 }
 
@@ -84,9 +82,12 @@ export type DeliverOptions = {
 /**
  * Cria o card e confirma o ID devolvido pelo Pipefy. Só responde ok com o ID do card em mãos.
  *
- * Duplicidade: com PIPEFY_FIELD_LEAD_ID configurado, procura o leadId no pipe antes de criar e antes de repetir uma
- * tentativa que possa ter chegado ao Pipefy. Sem esse campo, uma falha que possa ter criado o card (tempo esgotado,
- * queda de conexão, 500/504) não é repetida: o visitante recebe erro e o mesmo leadId vale para o reenvio.
+ * Duplicidade: com o campo do leadId no mapeamento (src/content/pipefy.ts), procura o leadId no pipe antes de criar.
+ * Uma falha que possa ter criado o card (tempo esgotado, queda de conexão, 500/504) nunca é repetida, nem com o campo:
+ * o pedido pode terminar no Pipefy depois do nosso prazo, e uma nova criação viraria um card duplicado. Nesse caso
+ * a busca pelo leadId confirma o card se ele já apareceu; se não, o visitante recebe erro e, no reenvio com o mesmo
+ * leadId, a busca antes de criar encontra o card que tiver chegado atrasado.
+ * Só falhas que comprovadamente não chegaram ao Pipefy (token, 429, 502, 503) são repetidas.
  */
 export async function deliverLeadToPipefy(client: PipefyClient, lead: LeadForPipefy, ids: PipefyFieldIds, options: DeliverOptions = {}): Promise<PipefyDelivery> {
   const retries = options.retries ?? 2;
@@ -115,7 +116,7 @@ export async function deliverLeadToPipefy(client: PipefyClient, lead: LeadForPip
       if (error.maybeProcessed) {
         const found = await existingCard();
         if (found) return { ok: true, cardId: found, duplicate: true, commentSaved: false };
-        if (!ids.leadId) return { ok: false, reason: error.reason };
+        return { ok: false, reason: error.reason };
       }
       if (!canRetry) return { ok: false, reason: error.reason };
       await sleep(retryDelayMs * 2 ** attempt);
@@ -124,7 +125,7 @@ export async function deliverLeadToPipefy(client: PipefyClient, lead: LeadForPip
 
   // O card já existe: o comentário é um complemento e a falha dele não desfaz o envio.
   try {
-    await client.createComment(cardId, buildPipefySummary(lead));
+    await client.createComment(cardId, buildPipefySummary(lead, ids));
     return { ok: true, cardId, duplicate: false, commentSaved: true };
   } catch (error) {
     return { ok: true, cardId, duplicate: false, commentSaved: false, commentReason: isPipefyError(error) ? error.reason : "erro-inesperado" };

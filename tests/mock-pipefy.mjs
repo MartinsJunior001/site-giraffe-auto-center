@@ -1,6 +1,7 @@
 // Simulador local do Pipefy (OAuth2 + GraphQL) e do webhook do Make, para testar a rota /api/leads sem tocar na produção.
 // Uso: node tests/mock-pipefy.mjs [porta]   (padrão 4010)
-// Controle: POST /__mode {"create": "ok" | "503" | "invalid" | "slow", "token": "ok" | "401"}; GET /__state; POST /__reset.
+// Controle: POST /__mode {"create": "ok" | "503" | "invalid" | "slow", "token": "ok" | "401"}; GET /__state; POST /__reset;
+// POST /__seed {"query": "..."} registra um card "pré-existente" (sem contar como criação nova) para testar a busca do leadId.
 import { createServer } from "node:http";
 
 const port = Number(process.argv[2] ?? 4010);
@@ -18,6 +19,7 @@ createServer(async (req, res) => {
   if (req.url === "/__mode") { mode = { ...mode, ...JSON.parse(body) }; return send(res, 200, mode); }
   if (req.url === "/__reset") { mode = { create: "ok", token: "ok" }; state = { tokens: 0, creates: [], comments: [], finds: 0, make: [], badAuth: 0 }; return send(res, 200, {}); }
   if (req.url === "/__state") return send(res, 200, state);
+  if (req.url === "/__seed") { state.creates.push({ id: String(++nextId), query: JSON.parse(body).query, seeded: true }); return send(res, 200, {}); }
 
   if (req.url === "/oauth/token") {
     state.tokens++;

@@ -1,5 +1,6 @@
 import { revenueOptions, roleOptions } from "@/content/diagnosis";
-import { createPipefyClient, pipefyConfigFromEnv, pipefyFieldIdsFromEnv, type PipefyClient } from "@/lib/pipefy";
+import { pipefyMapping, pipefyRevenueOptions, pipefyRoleOptions } from "@/content/pipefy";
+import { createPipefyClient, pipefyConfigFromEnv, type PipefyClient } from "@/lib/pipefy";
 import { deliverLeadToPipefy } from "@/lib/pipefy-lead";
 
 export type LeadPayload = {
@@ -59,28 +60,26 @@ export async function sendLead(lead: LeadPayload): Promise<SendResult> {
 let pipefyClient: { key: string; client: PipefyClient } | null = null;
 
 /**
- * Cria o card no funil Comercial do Pipefy (PIPEFY_PIPE_ID) e confirma o ID devolvido.
- * Os IDs dos campos vêm de PIPEFY_FIELD_*; sem os quatro obrigatórios, nada é enviado e a rota responde erro.
+ * Cria o card no funil "[CO] Comercial" do Pipefy e confirma o ID devolvido.
+ * IDs dos campos e tradução das opções: src/content/pipefy.ts. Se PIPEFY_PIPE_ID não for o pipe desse mapeamento,
+ * nada é enviado e a rota responde erro (evita gravar com IDs de outro pipe).
  */
 async function sendLeadToPipefy(lead: LeadPayload): Promise<SendResult> {
   const config = pipefyConfigFromEnv();
   if (!config) return { ok: false, unavailable: false, reason: "pipefy-configuracao-incompleta" };
-  const ids = pipefyFieldIdsFromEnv();
-  if (!ids) return { ok: false, unavailable: false, reason: "pipefy-mapeamento-incompleto" };
+  if (config.pipeId !== pipefyMapping.pipeId) return { ok: false, unavailable: false, reason: "pipefy-pipe-sem-mapeamento" };
+  const roleOption = pipefyRoleOptions[lead.role as keyof typeof pipefyRoleOptions];
+  const revenueOption = pipefyRevenueOptions[lead.revenue as keyof typeof pipefyRevenueOptions];
+  if (!roleOption || !revenueOption) return { ok: false, unavailable: false, reason: "pipefy-opcao-sem-traducao" };
   if (process.env.NODE_ENV === "production" && (!config.tokenUrl.startsWith("https://") || !config.apiUrl.startsWith("https://"))) return { ok: false, unavailable: false, reason: "pipefy-sem-https" };
 
   const key = [config.pipeId, config.clientId, config.tokenUrl, config.apiUrl].join("|");
   if (pipefyClient?.key !== key) pipefyClient = { key, client: createPipefyClient(config) };
 
-  const role = roleOptions.find(option => option.value === lead.role);
-  const revenueLabel = revenueOptions.find(option => option.value === lead.revenue)?.label ?? lead.revenue;
   const result = await deliverLeadToPipefy(pipefyClient.client, {
     leadId: lead.leadId,
-    // Texto enviado ao campo de papel do Pipefy: a mesma frase que o visitante escolheu no site.
-    // A consulta de leitura confere se essas frases existem como opções no Pipefy antes da ativação.
-    roleOption: role?.label ?? lead.role,
-    roleLabel: role?.label ?? lead.role,
-    revenueLabel,
+    roleOption,
+    revenueOption,
     name: lead.name.trim(),
     email: lead.email.trim(),
     phone: lead.phone,
@@ -88,7 +87,7 @@ async function sendLeadToPipefy(lead: LeadPayload): Promise<SendResult> {
     landingPage: lead.landingPage,
     utm: { source: utm(lead.attribution, "utm_source"), medium: utm(lead.attribution, "utm_medium"), campaign: utm(lead.attribution, "utm_campaign"), content: utm(lead.attribution, "utm_content"), term: utm(lead.attribution, "utm_term") },
     submittedAt: new Date(),
-  }, ids);
+  }, pipefyMapping.fields);
   if (!result.ok) return { ok: false, unavailable: false, reason: result.reason };
   return { ok: true, destination: "pipefy", cardId: result.cardId, duplicate: result.duplicate, commentSaved: result.commentSaved, commentReason: result.commentReason };
 }

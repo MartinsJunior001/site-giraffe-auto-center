@@ -6,7 +6,7 @@
 
 export type PipefyConfig = { pipeId: string; clientId: string; clientSecret: string; tokenUrl: string; apiUrl: string };
 
-/** IDs dos campos do formulário inicial do pipe. Vêm da consulta de leitura (scripts/pipefy/consultar-campos.mjs), nunca do nome visual. */
+/** IDs dos campos do formulário inicial do pipe (src/content/pipefy.ts), conferidos na API; nunca deduzidos do nome visual. */
 export type PipefyFieldIds = {
   role: string; name: string; email: string; phone: string;
   company?: string; revenue?: string; origin?: string; leadId?: string;
@@ -27,18 +27,6 @@ export function pipefyConfigFromEnv(env: Record<string, string | undefined> = pr
     pipeId, clientId, clientSecret,
     tokenUrl: env.PIPEFY_TOKEN_URL?.trim() || DEFAULT_TOKEN_URL,
     apiUrl: env.PIPEFY_API_URL?.trim() || DEFAULT_API_URL,
-  };
-}
-
-/** Lê PIPEFY_FIELD_*. Os quatro campos do formulário inicial (papel, nome, e-mail e WhatsApp) são obrigatórios. */
-export function pipefyFieldIdsFromEnv(env: Record<string, string | undefined> = process.env): PipefyFieldIds | null {
-  const read = (key: string) => env[key]?.trim() || undefined;
-  const role = read("PIPEFY_FIELD_ROLE"), name = read("PIPEFY_FIELD_NAME"), email = read("PIPEFY_FIELD_EMAIL"), phone = read("PIPEFY_FIELD_PHONE");
-  if (!role || !name || !email || !phone) return null;
-  return {
-    role, name, email, phone,
-    company: read("PIPEFY_FIELD_COMPANY"), revenue: read("PIPEFY_FIELD_REVENUE"),
-    origin: read("PIPEFY_FIELD_ORIGIN"), leadId: read("PIPEFY_FIELD_LEAD_ID"),
   };
 }
 

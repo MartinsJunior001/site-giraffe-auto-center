@@ -12,7 +12,7 @@ const privacyBlocked = process.env.NODE_ENV === "production" && !privacyPolicyCo
 
 // Proteção contra envios duplicados: cada abertura do formulário gera um leadId. Um leadId já gravado não é
 // reenviado (a rota confirma de novo), e um envio em andamento com o mesmo leadId não é repetido.
-// Fica na memória do servidor (uma instância). Segunda barreira: no Pipefy, a busca do leadId no pipe (PIPEFY_FIELD_LEAD_ID);
+// Fica na memória do servidor (uma instância). Segunda barreira: no Pipefy, a busca do leadId no campo "ID do envio (site)" do pipe;
 // no Make, a conferência do leadId na planilha.
 const DUPLICATE_WINDOW_MS = 30 * 60 * 1000;
 const delivered = new Map<string, number>();

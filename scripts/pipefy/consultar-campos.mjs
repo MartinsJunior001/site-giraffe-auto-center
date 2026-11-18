@@ -1,16 +1,17 @@
-// Consulta SOMENTE DE LEITURA do funil Comercial no Pipefy: autentica a conta de serviço, lista os campos do formulário
-// inicial (IDs reais) e confere se as opções do site existem no Pipefy. Não cria, não altera e não exclui nada.
+// Consulta SOMENTE DE LEITURA do funil "[CO] Comercial" no Pipefy: autentica a conta de serviço, lista os campos do
+// formulário inicial e confere o mapeamento do site (src/content/pipefy.ts): IDs, tipos, campos editáveis e as
+// 13 opções traduzidas de papel e faturamento. Não cria, não altera e não exclui nada.
 //
 // Uso (na pasta do projeto):  node scripts/pipefy/consultar-campos.mjs
 // Credenciais: arquivo .env.pipefy.local (ignorado pelo Git) com PIPEFY_CLIENT_ID e PIPEFY_CLIENT_SECRET,
-// ou as mesmas variáveis no ambiente. Os valores nunca são impressos.
+// ou as mesmas variáveis no ambiente. Os valores nunca são impressos. Sai com código 1 se algo não bater.
 import { existsSync } from "node:fs";
 import { createPipefyClient, pipefyConfigFromEnv } from "../../src/lib/pipefy.ts";
-import { roleOptions } from "../../src/content/diagnosis.ts";
+import { pipefyExpectedTypes, pipefyMapping, pipefyRevenueOptions, pipefyRoleOptions } from "../../src/content/pipefy.ts";
 
 const envFile = new URL("../../.env.pipefy.local", import.meta.url);
 if (existsSync(envFile)) process.loadEnvFile(envFile);
-process.env.PIPEFY_PIPE_ID ||= "307417378";
+process.env.PIPEFY_PIPE_ID ||= pipefyMapping.pipeId;
 
 const missing = ["PIPEFY_CLIENT_ID", "PIPEFY_CLIENT_SECRET"].filter(key => !process.env[key]?.trim());
 if (missing.length) {
@@ -21,6 +22,7 @@ if (missing.length) {
 
 const config = pipefyConfigFromEnv();
 if (!config) { console.log("PIPEFY_PIPE_ID inválido: use só números."); process.exit(2); }
+if (config.pipeId !== pipefyMapping.pipeId) console.log(`Atenção: PIPEFY_PIPE_ID=${config.pipeId}, mas o mapeamento é do pipe ${pipefyMapping.pipeId}.`);
 const client = createPipefyClient(config, { timeoutMs: 15000 });
 
 try {
@@ -31,48 +33,40 @@ try {
   process.exit(1);
 }
 
-let pipe;
-try {
-  pipe = await client.getStartForm(true);
-} catch (error) {
-  // Se type/required/options não existirem no esquema, repete só com id e label.
-  console.log(`Consulta detalhada recusada (${error.reason ?? error.message}); repetindo só com id e label.`);
-  pipe = await client.getStartForm(false);
-}
-
+const { pipe } = await client.query(`query { pipe(id: ${config.pipeId}) { id name start_form_fields { id label type required editable options } } }`);
+if (!pipe) { console.log(`Pipe ${config.pipeId}: sem acesso ou inexistente.`); process.exit(1); }
 console.log(`\nPipe ${pipe.id}: ${pipe.name}`);
-console.log(`Campos do formulário inicial (${pipe.start_form_fields.length}):\n`);
+console.log(`Campos do formulário inicial (${pipe.start_form_fields.length}):`);
 for (const field of pipe.start_form_fields) {
-  console.log(`- id: ${field.id}`);
-  console.log(`  rótulo: ${field.label}`);
-  if (field.type !== undefined) console.log(`  tipo: ${field.type}`);
-  if (field.required !== undefined) console.log(`  obrigatório: ${field.required ? "sim" : "não"}`);
-  if (field.options?.length) console.log(`  opções: ${field.options.map(option => JSON.stringify(option)).join(", ")}`);
+  console.log(`- ${field.id} | "${field.label}" | ${field.type} | obrigatório: ${field.required ? "sim" : "não"} | editável: ${field.editable ? "sim" : "não"}${field.options?.length ? ` | opções: ${field.options.map(option => JSON.stringify(option)).join(", ")}` : ""}`);
 }
 
-// Opções do papel: o site envia o texto exibido ao visitante (label). Confere em todos os campos com opções.
-const withOptions = pipe.start_form_fields.filter(field => field.options?.length);
-if (withOptions.length) {
-  console.log("\nConferência das opções de papel do site:");
-  for (const option of roleOptions) {
-    const hits = withOptions.filter(field => field.options.includes(option.label)).map(field => field.id);
-    console.log(`- "${option.label}": ${hits.length ? `existe em ${hits.join(", ")}` : "NÃO encontrada em nenhum campo"}`);
-  }
+const results = [];
+const check = (name, pass, info = "") => { results.push(pass); console.log(`${pass ? "PASS" : "FAIL"} | ${name}${info ? ` | ${info}` : ""}`); };
+console.log("\nConferência do mapeamento (src/content/pipefy.ts):");
+const byId = new Map(pipe.start_form_fields.map(field => [field.id, field]));
+for (const [key, id] of Object.entries(pipefyMapping.fields)) {
+  const field = byId.get(id);
+  const expected = pipefyExpectedTypes[key];
+  check(`campo ${key} → ${id}`, !!field && field.type === expected && field.editable !== false, field ? `tipo ${field.type} (esperado ${expected}), editável: ${field.editable ? "sim" : "não"}` : "não existe no formulário inicial");
 }
+for (const [label, table, id] of [["papel", pipefyRoleOptions, pipefyMapping.fields.role], ["faturamento", pipefyRevenueOptions, pipefyMapping.fields.revenue]]) {
+  const options = byId.get(id)?.options ?? [];
+  for (const [siteValue, pipefyOption] of Object.entries(table)) check(`opção de ${label} "${siteValue}" → "${pipefyOption}"`, options.includes(pipefyOption));
+}
+const required = pipe.start_form_fields.filter(field => field.required && !Object.values(pipefyMapping.fields).includes(field.id));
+check("nenhum campo obrigatório fora do mapeamento", required.length === 0, required.map(field => field.id).join(", "));
 
-// Confere no esquema as operações que a integração usa (introspecção, também só leitura).
-try {
-  const schema = await client.query(`query {
-    q: __schema { queryType { fields { name } } mutationType { fields { name } } }
-    cardInput: __type(name: "CreateCardInput") { inputFields { name } }
-    commentInput: __type(name: "CreateCommentInput") { inputFields { name } }
-  }`);
+// Operações usadas pela integração (introspecção, também só leitura).
+const schema = await client.query(`query { q: __schema { queryType { fields { name } } mutationType { fields { name } } } }`).catch(error => { console.log(`Introspecção indisponível (${error.reason ?? error.message}).`); return null; });
+if (schema) {
   const queries = new Set(schema.q.queryType.fields.map(field => field.name));
   const mutations = new Set(schema.q.mutationType.fields.map(field => field.name));
-  console.log("\nOperações usadas pela integração:");
-  console.log(`- findCards: ${queries.has("findCards") ? "disponível" : "NÃO encontrada"}`);
-  console.log(`- createCard: ${mutations.has("createCard") ? "disponível" : "NÃO encontrada"}${schema.cardInput ? ` (entrada: ${schema.cardInput.inputFields.map(field => field.name).join(", ")})` : ""}`);
-  console.log(`- createComment: ${mutations.has("createComment") ? "disponível" : "NÃO encontrada"}${schema.commentInput ? ` (entrada: ${schema.commentInput.inputFields.map(field => field.name).join(", ")})` : ""}`);
-} catch (error) {
-  console.log(`\nIntrospecção do esquema indisponível (${error.reason ?? error.message}).`);
+  check("operação findCards disponível", queries.has("findCards"));
+  check("operação createCard disponível", mutations.has("createCard"));
+  check("operação createComment disponível", mutations.has("createComment"));
 }
+
+const failed = results.filter(pass => !pass).length;
+console.log(`\nTOTAL: ${results.length - failed}/${results.length} PASS`);
+process.exit(failed ? 1 : 0);
