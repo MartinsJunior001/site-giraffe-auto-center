@@ -5,6 +5,7 @@ import { TestimonialGallery } from "@/components/sections/TestimonialGallery";
 import { TeamCarousel } from "@/components/sections/TeamCarousel";
 import { UiIcon } from "@/components/icons/UiIcon";
 import { BrazilGlobe } from "@/components/globe/BrazilGlobe";
+import { AfterPageLoad } from "@/components/media/AfterPageLoad";
 
 function SectionLabel({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
   return <p className={`section-label ${light ? "section-label-light" : ""}`}><span className="label-line" aria-hidden="true"></span>{children}</p>;
@@ -64,7 +65,7 @@ export function TrustedBy() {
       <div className="trusted-marquee-track">
         {[false, true].map((duplicate) => <ul key={duplicate ? "copy" : "original"} className="trusted-marquee-group" aria-hidden={duplicate || undefined}>
           {logos.map(([file, name]) => <li key={file} className="trusted-marquee-item">
-            <Image src={`/images/logo-carrossel/${encodeURIComponent(file)}`} alt={duplicate ? "" : `Logo de ${name}`} width={1024} height={1024} sizes="(max-width: 760px) 100px, (max-width: 1100px) 112px, 128px" loading="lazy" />
+            <AfterPageLoad><Image src={`/images/logo-carrossel/${encodeURIComponent(file)}`} alt={duplicate ? "" : `Logo de ${name}`} width={1024} height={1024} sizes="(max-width: 760px) 100px, (max-width: 1100px) 112px, 128px" loading="lazy" /></AfterPageLoad>
           </li>)}
         </ul>)}
       </div>
@@ -99,7 +100,7 @@ function FeatureCards({ items, label }: { items: FeatureCard[]; label: string })
       <h3>{item.title}</h3>
       <p className="feature-text">{item.text}</p>
       <div className="feature-bottom">
-        <figure className="feature-media"><Image src={item.image} alt={item.alt} fill sizes="(max-width: 760px) 92vw, (max-width: 1200px) 46vw, 30vw" loading="lazy" /></figure>
+        <figure className="feature-media"><AfterPageLoad><Image src={item.image} alt={item.alt} fill sizes="(max-width: 760px) 92vw, (max-width: 1200px) 46vw, 30vw" loading="lazy" /></AfterPageLoad></figure>
         <a className={`button ${i === 0 ? "button-orange" : "button-light"} feature-button`} href="#diagnostico">{item.cta} <UiIcon name="up-right" /></a>
       </div>
     </li>)}
