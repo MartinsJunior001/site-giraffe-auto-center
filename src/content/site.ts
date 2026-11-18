@@ -1,6 +1,13 @@
 export const siteName = "Giraffe Assessoria";
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
+// Perfis oficiais da Giraffe nas redes sociais (rodapé e dados estruturados da página).
+export const socialLinks = [
+  { name: "instagram", label: "Instagram", href: "https://www.instagram.com/giraffe_assessoria" },
+  { name: "facebook", label: "Facebook", href: "https://www.facebook.com/giraffeassessoria" },
+  { name: "youtube", label: "YouTube", href: "https://www.youtube.com/@Giraffe-Assessoria" },
+] as const;
+
 export const navigation = [
   { label: "Início", href: "#inicio" },
   { label: "Sobre", href: "#sobre" },
