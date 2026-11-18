@@ -32,13 +32,15 @@ type PrivacyPolicy = {
 };
 
 export const privacyPolicy: PrivacyPolicy = {
-  updatedAt: "",
+  // Textos aprovados pela Giraffe em 18/11/2026. Com updatedAt, leadDestination, retention e legalBasis preenchidos,
+  // o formulário aceita envios em produção. Ao mudar a política, atualize updatedAt.
+  updatedAt: "18 de novembro de 2026",
   legalName: "Giraffe Marketing LTDA",
   cnpj: "40.160.836/0001-78",
   contactEmail: "contato@giraffeassessoria.com.br",
-  leadDestination: "",
-  retention: "",
-  legalBasis: "",
+  leadDestination: "a plataforma Pipefy",
+  retention: "Os dados enviados pelo formulário, incluindo a página de origem e os parâmetros de campanha (UTM), ficam guardados por até 24 meses a partir do envio. Depois desse prazo, são excluídos ou anonimizados, exceto se você tiver se tornado cliente da Giraffe. Você pode pedir a exclusão antes disso pelo e-mail indicado nesta política.",
+  legalBasis: "execução de procedimentos preliminares relacionados a contrato, a pedido do titular dos dados (art. 7º, inciso V, da Lei nº 13.709/2018), já que os dados são usados para responder à sua solicitação de contato sobre os serviços da Giraffe",
   dpo: "",
   address: "",
   hosting: "",
