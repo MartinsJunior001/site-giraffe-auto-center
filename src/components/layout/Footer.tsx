@@ -11,11 +11,10 @@ export function Footer() {
           <a className="footer-brand" href="#inicio" aria-label="Giraffe Assessoria, voltar ao início">
             <Image
               className="footer-logo"
-              src="/images/logos/logo-giraffe-assessoria-branca.svg"
+              src="/images/logos/logo-giraffe-assessoria-branca.png"
               alt=""
               width={360}
               height={133}
-              unoptimized
             />
           </a>
           <p>Marketing e estratégia para oficinas e centros automotivos.</p>

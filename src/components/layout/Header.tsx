@@ -71,7 +71,7 @@ export function Header() {
 
   return <header ref={headerRef} className={`site-header ${pastHero ? "is-scrolled" : ""} ${tone === "light" ? "is-light" : ""}`}>
     <div ref={barRef} className="header-inner container">
-      <a className="brand" href="#inicio" aria-label="Giraffe Assessoria, voltar ao início"><Image className="brand-logo brand-logo-white" src="/images/logos/logo-giraffe-assessoria-branca.svg" alt="" width={160} height={59} unoptimized /><Image className="brand-logo brand-logo-dark" src="/images/logos/logo-giraffe-assessoria-preta.svg" alt="" width={160} height={59} unoptimized /></a>
+      <a className="brand" href="#inicio" aria-label="Giraffe Assessoria, voltar ao início"><Image className="brand-logo brand-logo-white" src="/images/logos/logo-giraffe-assessoria-branca.png" alt="" width={160} height={59} /><Image className="brand-logo brand-logo-dark" src="/images/logos/logo-giraffe-assessoria-preta.png" alt="" width={160} height={59} /></a>
       <nav className="desktop-nav" aria-label="Navegação principal">{navigation.map(item => <a key={item.href} href={item.href}>{item.label}</a>)}</nav>
       <div className="header-actions">
         <a className="button button-orange header-btn header-cta" href="#diagnostico">Solicitar diagnóstico <UiIcon name="up-right" /></a>

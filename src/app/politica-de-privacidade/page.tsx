@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
   return <main className="policy">
     <div className="policy-inner">
       <Link className="policy-brand" href="/" aria-label={`${siteName}, voltar à página inicial`}>
-        <Image src="/images/logos/logo-giraffe-assessoria-preta.svg" alt="" width={160} height={59} unoptimized priority />
+        <Image src="/images/logos/logo-giraffe-assessoria-preta.png" alt="" width={160} height={59} priority />
       </Link>
       <h1>Política de Privacidade</h1>
       <p className="policy-updated">Última atualização: <Field value={policy.updatedAt} pending="data desta versão" /></p>

@@ -19,7 +19,7 @@ export default function ThankYouPage() {
   const hasVideo = Boolean(thankYouVideo.src);
   return <main className="thanks">
     <div className={`container thanks-inner${hasVideo ? "" : " thanks-inner-compact"}`}>
-      <Link className="thanks-brand" href="/" aria-label={`${siteName}, voltar à página inicial`}><Image src="/images/logos/logo-giraffe-assessoria-branca.svg" alt="" width={160} height={59} unoptimized priority /></Link>
+      <Link className="thanks-brand" href="/" aria-label={`${siteName}, voltar à página inicial`}><Image src="/images/logos/logo-giraffe-assessoria-branca.png" alt="" width={160} height={59} priority /></Link>
       <p className="thanks-badge"><span aria-hidden="true"></span>Solicitação confirmada</p>
       {hasVideo ? <>
         <h1>Assista ao vídeo antes de <em>falar com o especialista</em></h1>
