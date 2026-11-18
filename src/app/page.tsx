@@ -3,7 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 import { TrustedBy, About, PainPoints, Benefits, CaseStudies, Solutions, WhyGiraffe, FAQ } from "@/components/sections/Sections";
 import { Diagnosis } from "@/components/sections/Diagnosis";
 import { CinematicHero } from "@/components/hero/CinematicHero";
-import { siteName, siteUrl } from "@/content/site";
+import { siteName, siteUrl, socialLinks } from "@/content/site";
 import { privacyPolicy } from "@/content/privacy";
 import { whatsappNumber } from "@/content/diagnosis";
 
@@ -20,6 +20,7 @@ const organization = siteUrl ? {
   logo: `${siteUrl}/images/logos/logo-giraffe-assessoria-preta.png`,
   description: "Estratégia de marketing, captação e acompanhamento comercial para oficinas e centros automotivos.",
   email: privacyPolicy.contactEmail,
+  sameAs: socialLinks.map((social) => social.href),
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "sales",

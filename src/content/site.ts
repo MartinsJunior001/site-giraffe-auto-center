@@ -1,6 +1,13 @@
 export const siteName = "Giraffe Assessoria";
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
+// Perfis oficiais da Giraffe nas redes sociais (rodapé e dados estruturados da página).
+export const socialLinks = [
+  { name: "instagram", label: "Instagram", href: "https://www.instagram.com/giraffe_assessoria" },
+  { name: "facebook", label: "Facebook", href: "https://www.facebook.com/giraffeassessoria" },
+  { name: "youtube", label: "YouTube", href: "https://www.youtube.com/@Giraffe-Assessoria" },
+] as const;
+
 export const navigation = [
   { label: "Início", href: "#inicio" },
   { label: "Sobre", href: "#sobre" },
@@ -39,12 +46,13 @@ export const solutions: FeatureCard[] = [
   { title: "Indicadores e relatórios", text: "Entender os resultados com mais clareza.", tag: "Resultados", image: "/images/cards/solucao-indicadores.jpg", alt: "Dono da oficina e consultor analisando gráficos em um monitor", cta: "Ver meus resultados" },
 ];
 
-// Seção "Sobre nós". Números informados pela Giraffe (material institucional enviado em 13/11/2026).
+// Seção "Sobre nós". Números informados pela Giraffe (material institucional enviado em 13/11/2026;
+// investimento em anúncios atualizado para +20 mi em 18/11/2026).
 export const aboutFacts = [
   { value: "+120 mi", label: "em vendas para clientes" },
-  { value: "+120", label: "clientes ativos" },
+  { value: "+50", label: "clientes ativos" },
   { value: "+2.354", label: "serviços prestados" },
-  { value: "+9 mi", label: "investidos em anúncios" },
+  { value: "+20 mi", label: "investidos em anúncios" },
 ] as const;
 
 // Carrossel da equipe (seção "Por que a Giraffe"). Fotos recortadas em retrato 4:5 (800×1000)
@@ -55,10 +63,12 @@ export type TeamMember = { name: string; role: string; photo?: string };
 
 export const team: TeamMember[] = [
   { name: "Martins Junior", role: "CEO e Fundador", photo: "/images/equipe/martins-junior.jpg" },
-  { name: "Alex Martins", role: "COO e Sócio-Proprietário", photo: "/images/equipe/alex-martins.jpg" },
-  { name: "Daine Silva", role: "CFO", photo: "/images/equipe/daine-silva.jpg" },
+  { name: "Alex Martins", role: "COO e Sócio Proprietário", photo: "/images/equipe/alex-martins.jpg" },
+  { name: "Daine Silva", role: "Financeiro e Fundadora", photo: "/images/equipe/daine-silva.jpg" },
   { name: "Jhennipher Martins", role: "Customer Success", photo: "/images/equipe/jhennipher-martins.jpg" },
   { name: "Hiago Henrique", role: "Gestor de Tráfego", photo: "/images/equipe/hiago-henrique.jpg" },
+  // Sem foto ainda: o cartão mostra a silhueta. Quando houver, recorte em 800×1000 e acrescente "photo".
+  { name: "Matheus Martins", role: "Gestor de Tráfego" },
   { name: "Matheus Aurélio", role: "Web Designer", photo: "/images/equipe/matheus.jpg" },
   { name: "Naiara Silva", role: "Designer", photo: "/images/equipe/naiara-silva.jpg" },
   { name: "João Pedro", role: "Designer", photo: "/images/equipe/joao-pedro.jpg" },

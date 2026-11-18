@@ -1,7 +1,8 @@
 ﻿import Image from "next/image";
 import Link from "next/link";
 import { privacyPolicyPath } from "@/content/privacy";
-import { siteName } from "@/content/site";
+import { siteName, socialLinks } from "@/content/site";
+import { SocialIcon } from "@/components/icons/SocialIcon";
 
 export function Footer() {
   return (
@@ -28,6 +29,15 @@ export function Footer() {
         <div>
           <span className="label">CONTATO</span>
           <p>Os canais oficiais de contato serão publicados após confirmação.</p>
+          <ul className="footer-social" aria-label="Redes sociais da Giraffe">
+            {socialLinks.map((social) => (
+              <li key={social.name}>
+                <a href={social.href} target="_blank" rel="noopener noreferrer" aria-label={`${social.label} da Giraffe (abre em nova aba)`}>
+                  <SocialIcon name={social.name} />
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
       <div className="container footer-bottom">

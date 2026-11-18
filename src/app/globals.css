@@ -162,8 +162,19 @@ button { cursor: pointer; }
 .ticker-index { font-family: var(--font-geist-mono); font-size: 11px; letter-spacing: .08em; color: #a0a0a0; }
 .ticker-arrow.ui-icon { width: 28px; height: 28px; color: var(--orange); }
 .benefit-ticker strong { grid-column: 1 / -1; color: #f1f1f1; font-family: var(--font-geist); font-size: clamp(20px,2.4vw,36px); font-weight: 600; line-height: 1; letter-spacing: -.06em; text-transform: uppercase; white-space: nowrap; }
-/* Os cinco depoimentos ficam sempre na mesma fileira: lado a lado no desktop e em carrossel nas telas menores. */
-.testimonial-gallery { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: clamp(14px,1.8vw,28px); }
+/* Os depoimentos ficam numa fileira só, em carrossel que passa sozinho: 4 cards visíveis no desktop
+   (5 a partir de 1800 px) e os indicadores numerados embaixo, no desenho das etapas do hero. */
+.testimonial-gallery { --t-cols: 4; --t-gap: clamp(14px,1.8vw,28px); display: flex; gap: var(--t-gap); overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.testimonial-gallery::-webkit-scrollbar { display: none; }
+.testimonial-gallery > .testimonial-card { flex: 0 0 calc((100% - (var(--t-cols) - 1) * var(--t-gap)) / var(--t-cols)); scroll-snap-align: start; }
+@media (min-width: 1800px) { .testimonial-gallery { --t-cols: 5; } }
+.testimonial-dots { margin-top: 22px; }
+.testimonial-dots ol { display: flex; justify-content: center; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.testimonial-dot { display: flex; flex-direction: column; gap: 8px; min-width: 46px; padding: 6px 0; border: 0; background: none; color: #666; font-family: var(--font-geist-mono), monospace; font-size: 12px; letter-spacing: .08em; text-align: left; cursor: pointer; transition: color .4s; }
+.testimonial-dot::before { content: ""; height: 2px; background: #d6d6d6; transition: background .4s; }
+.testimonial-dot:hover, .testimonial-dot.is-active { color: var(--black); }
+.testimonial-dot.is-active::before { background: var(--orange); }
+.testimonial-dot:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; }
 .testimonial-card { position: relative; container-type: inline-size; display: flex; min-width: 0; flex-direction: column; padding: 0; border: 0; border-radius: 15px; overflow: hidden; background: #2d2d2d; color: var(--white); text-align: left; }
 .testimonial-card-ready { cursor: pointer; }
 .testimonial-card-pending { cursor: default; }
@@ -397,6 +408,12 @@ button { cursor: pointer; }
 .footer-grid .label { color: var(--orange); margin-bottom: 8px; }
 .footer-grid a:not(.footer-brand) { font-size: 13px; }
 .footer-grid a:hover { color: var(--orange); }
+/* Redes sociais na coluna da direita do rodapé: botões redondos, como as setas do carrossel da equipe. */
+.footer-social { display: flex; gap: 10px; margin: 4px 0 0; padding: 0; list-style: none; }
+.footer-grid .footer-social a { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid #555; border-radius: 50%; color: var(--white); transition: border-color .2s, color .2s; }
+.footer-grid .footer-social a:hover { border-color: var(--orange); color: var(--orange); }
+.footer-social a:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+.footer-social .social-icon { width: 19px; height: 19px; }
 .footer-bottom { display: flex; justify-content: space-between; gap: 20px; padding-block: 20px; border-top: 1px solid #444; color: #aaa; font-size: 11px; }
 .scroll-reveal.is-pending { opacity: 0; transform: translateY(22px); transition: opacity .6s, transform .6s; }
 .scroll-reveal.is-pending.is-visible { opacity: 1; transform: none; }
@@ -404,9 +421,9 @@ button { cursor: pointer; }
   .feature-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 1279px) {
-  /* Abaixo de 1280 px os 5 cards não cabem lado a lado: a mesma fileira vira um carrossel de arrastar. */
-  .testimonial-gallery { display: flex; margin-inline: calc(-1 * var(--gutter)); padding: 0 var(--gutter) 16px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; scrollbar-width: thin; }
-  .testimonial-card { flex: 0 0 clamp(240px, 27vw, 300px); scroll-snap-align: start; }
+  /* Abaixo de 1280 px os cards têm largura fixa e o próximo aparece cortado na borda da tela. */
+  .testimonial-gallery { display: flex; margin-inline: calc(-1 * var(--gutter)); padding: 0 var(--gutter) 16px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .testimonial-gallery > .testimonial-card { flex: 0 0 clamp(240px, 27vw, 300px); }
 }
 @media (max-width: 1100px) {
   .feature-grid-6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -451,8 +468,11 @@ button { cursor: pointer; }
   .ticker-arrow.ui-icon { grid-area: icon; }
   .benefit-ticker li:not(:last-child) .ticker-arrow { transform: rotate(90deg); }
   .benefit-ticker strong { grid-area: stage; grid-column: auto; font-size: clamp(24px,7vw,32px); }
-  .testimonial-gallery { display: flex; gap: 14px; margin-inline: calc(-1 * var(--gutter)); padding: 0 var(--gutter) 16px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; scrollbar-width: thin; }
-  .testimonial-card { flex: 0 0 min(78vw,310px); scroll-snap-align: start; }
+  .testimonial-gallery { display: flex; gap: 14px; margin-inline: calc(-1 * var(--gutter)); padding: 0 var(--gutter) 16px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-padding-inline: var(--gutter); scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .testimonial-gallery > .testimonial-card { flex: 0 0 min(78vw,310px); }
+  .testimonial-dots { margin-top: 10px; }
+  .testimonial-dots ol { gap: 8px; }
+  .testimonial-dot { min-width: 36px; }
   .diagnosis-aside { margin-top: 40px; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .footer-grid > div:first-child { grid-column: 1 / -1; }
