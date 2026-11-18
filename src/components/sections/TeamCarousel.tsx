@@ -102,7 +102,7 @@ export function TeamCarousel() {
           style={{ "--offset": offset, "--distance": distance } as React.CSSProperties}
           aria-hidden={distance > 1 || undefined}
         >
-          <button type="button" className="team-card-inner" onClick={() => { if (swiped.current) { swiped.current = false; return; } go(index); }} tabIndex={distance > 1 ? -1 : 0} aria-label={`${member.name}, ${member.role}`} aria-current={offset === 0 || undefined}>
+          <button type="button" className="team-card-inner" onClick={() => { if (swiped.current) { swiped.current = false; return; } go(index); }} tabIndex={distance > 1 ? -1 : 0} aria-current={offset === 0 || undefined}>
             <span className="team-photo">
               {member.photo ? <Image src={member.photo} alt="" fill sizes="260px" /> : <Silhouette />}
             </span>

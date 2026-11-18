@@ -372,7 +372,8 @@ export function CinematicHero() {
                     <button
                       type="button"
                       className={`ch-step${index === active ? " is-active" : ""}${index < active ? " is-done" : ""}`}
-                      aria-label={`Etapa ${index} de ${LAST}: ${scene.label}`}
+                      // O nome começa pelo número visível ("01"), para quem aciona por comando de voz.
+                      aria-label={`${pad(index)}, etapa ${index} de ${LAST}: ${scene.label}`}
                       aria-current={index === active ? "step" : undefined}
                       onClick={() => goTo(index)}
                     >

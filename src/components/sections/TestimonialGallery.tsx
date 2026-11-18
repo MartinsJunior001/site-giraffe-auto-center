@@ -79,7 +79,10 @@ export function TestimonialGallery() {
   return <>
     <div className="testimonial-gallery" role="region" aria-label="Depoimentos em vídeo" tabIndex={0}>
       {testimonials.map((testimonial) => testimonial.youtubeId ? (
-        <button key={testimonial.id} className="testimonial-card testimonial-card-ready" type="button" onClick={(event) => openVideo(testimonial, event.currentTarget)} aria-label={testimonial.name ? `Assistir depoimento em vídeo de ${testimonial.name}, ${testimonial.company}` : `Assistir ${testimonial.title.toLowerCase()} da ${testimonial.company}`} aria-describedby={testimonial.quote ? `${testimonial.id}-quote` : undefined}>
+        // O nome acessível vem do próprio conteúdo (nome, empresa e frase visíveis), com o aviso do vídeo só para
+        // leitores de tela: quem usa comando de voz pode acionar o card falando o que está escrito nele.
+        <button key={testimonial.id} className="testimonial-card testimonial-card-ready" type="button" onClick={(event) => openVideo(testimonial, event.currentTarget)}>
+          <span className="sr-only">Assistir depoimento em vídeo:</span>
           <CardContent testimonial={testimonial} />
         </button>
       ) : (
