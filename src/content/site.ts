@@ -60,6 +60,8 @@ export const team: TeamMember[] = [
   { name: "Daine Silva", role: "Financeiro e Fundadora", photo: "/images/equipe/daine-silva.jpg" },
   { name: "Jhennipher Martins", role: "Customer Success", photo: "/images/equipe/jhennipher-martins.jpg" },
   { name: "Hiago Henrique", role: "Gestor de Tráfego", photo: "/images/equipe/hiago-henrique.jpg" },
+  // Sem foto ainda: o cartão mostra a silhueta. Quando houver, recorte em 800×1000 e acrescente "photo".
+  { name: "Matheus Martins", role: "Gestor de Tráfego" },
   { name: "Matheus Aurélio", role: "Web Designer", photo: "/images/equipe/matheus.jpg" },
   { name: "Naiara Silva", role: "Designer", photo: "/images/equipe/naiara-silva.jpg" },
   { name: "João Pedro", role: "Designer", photo: "/images/equipe/joao-pedro.jpg" },
