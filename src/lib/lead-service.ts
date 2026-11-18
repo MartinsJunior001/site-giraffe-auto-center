@@ -1,4 +1,6 @@
 import { revenueOptions, roleOptions } from "@/content/diagnosis";
+import { createPipefyClient, pipefyConfigFromEnv, pipefyFieldIdsFromEnv, type PipefyClient } from "@/lib/pipefy";
+import { deliverLeadToPipefy } from "@/lib/pipefy-lead";
 
 export type LeadPayload = {
   leadId: string;
@@ -9,7 +11,7 @@ export type LeadPayload = {
 };
 
 export type SendResult =
-  | { ok: true }
+  | { ok: true; destination: "pipefy" | "make"; cardId?: string; duplicate?: boolean; commentSaved?: boolean; commentReason?: string }
   | { ok: false; unavailable: true }
   | { ok: false; unavailable: false; reason: string };
 
@@ -39,6 +41,58 @@ function utm(attribution: Record<string, string>, key: (typeof UTM_KEYS)[number]
   return typeof value === "string" ? value.slice(0, 200) : "";
 }
 
+/** Destino dos leads: o Pipefy quando PIPEFY_CLIENT_ID está definido; senão, o webhook do Make (LEAD_WEBHOOK_URL). */
+export function leadDestination(env: Record<string, string | undefined> = process.env): "pipefy" | "make" | null {
+  if (env.PIPEFY_CLIENT_ID?.trim()) return "pipefy";
+  if (env.LEAD_WEBHOOK_URL) return "make";
+  return null;
+}
+
+export async function sendLead(lead: LeadPayload): Promise<SendResult> {
+  const destination = leadDestination();
+  if (destination === "pipefy") return sendLeadToPipefy(lead);
+  if (destination === "make") return sendLeadToMake(lead);
+  return { ok: false, unavailable: true };
+}
+
+// Um cliente por processo, para reaproveitar o token entre os envios. É recriado se a configuração mudar.
+let pipefyClient: { key: string; client: PipefyClient } | null = null;
+
+/**
+ * Cria o card no funil Comercial do Pipefy (PIPEFY_PIPE_ID) e confirma o ID devolvido.
+ * Os IDs dos campos vêm de PIPEFY_FIELD_*; sem os quatro obrigatórios, nada é enviado e a rota responde erro.
+ */
+async function sendLeadToPipefy(lead: LeadPayload): Promise<SendResult> {
+  const config = pipefyConfigFromEnv();
+  if (!config) return { ok: false, unavailable: false, reason: "pipefy-configuracao-incompleta" };
+  const ids = pipefyFieldIdsFromEnv();
+  if (!ids) return { ok: false, unavailable: false, reason: "pipefy-mapeamento-incompleto" };
+  if (process.env.NODE_ENV === "production" && (!config.tokenUrl.startsWith("https://") || !config.apiUrl.startsWith("https://"))) return { ok: false, unavailable: false, reason: "pipefy-sem-https" };
+
+  const key = [config.pipeId, config.clientId, config.tokenUrl, config.apiUrl].join("|");
+  if (pipefyClient?.key !== key) pipefyClient = { key, client: createPipefyClient(config) };
+
+  const role = roleOptions.find(option => option.value === lead.role);
+  const revenueLabel = revenueOptions.find(option => option.value === lead.revenue)?.label ?? lead.revenue;
+  const result = await deliverLeadToPipefy(pipefyClient.client, {
+    leadId: lead.leadId,
+    // Texto enviado ao campo de papel do Pipefy: a mesma frase que o visitante escolheu no site.
+    // A consulta de leitura confere se essas frases existem como opções no Pipefy antes da ativação.
+    roleOption: role?.label ?? lead.role,
+    roleLabel: role?.label ?? lead.role,
+    revenueLabel,
+    name: lead.name.trim(),
+    email: lead.email.trim(),
+    phone: lead.phone,
+    company: lead.company.trim(),
+    landingPage: lead.landingPage,
+    utm: { source: utm(lead.attribution, "utm_source"), medium: utm(lead.attribution, "utm_medium"), campaign: utm(lead.attribution, "utm_campaign"), content: utm(lead.attribution, "utm_content"), term: utm(lead.attribution, "utm_term") },
+    submittedAt: new Date(),
+  }, ids);
+  if (!result.ok) return { ok: false, unavailable: false, reason: result.reason };
+  return { ok: true, destination: "pipefy", cardId: result.cardId, duplicate: result.duplicate, commentSaved: result.commentSaved, commentReason: result.commentReason };
+}
+
 /**
  * Envia o lead ao webhook do Make (LEAD_WEBHOOK_URL), sempre pelo servidor.
  *
@@ -49,7 +103,7 @@ function utm(attribution: Record<string, string>, key: (typeof UTM_KEYS)[number]
  *
  * Com LEAD_WEBHOOK_TOKEN, a chave vai no cabeçalho x-make-apikey (autenticação por chave de API do webhook do Make).
  */
-export async function sendLead(lead: LeadPayload): Promise<SendResult> {
+async function sendLeadToMake(lead: LeadPayload): Promise<SendResult> {
   const endpoint = process.env.LEAD_WEBHOOK_URL;
   if (!endpoint) return { ok: false, unavailable: true };
   if (process.env.NODE_ENV === "production" && !endpoint.startsWith("https://")) return { ok: false, unavailable: false, reason: "webhook-sem-https" };
@@ -91,5 +145,5 @@ export async function sendLead(lead: LeadPayload): Promise<SendResult> {
   if (!response.ok) return { ok: false, unavailable: false, reason: `http-${response.status}` };
   const confirmation = await response.json().catch(() => null) as { ok?: unknown; leadId?: unknown } | null;
   if (!confirmation || confirmation.ok !== true || confirmation.leadId !== lead.leadId) return { ok: false, unavailable: false, reason: "sem-confirmacao-da-planilha" };
-  return { ok: true };
+  return { ok: true, destination: "make" };
 }
