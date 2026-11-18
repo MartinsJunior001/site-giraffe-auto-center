@@ -91,7 +91,7 @@ export const heroScenes: HeroScene[] = [
 ];
 
 /** Linha fixa acima do título (é o h1 da página). */
-export const heroEyebrow = "Assessoria de crescimento para oficinas e auto centers";
+export const heroEyebrow = "Assessoria especializada de crescimento";
 
 /** Botão do estado final. "#diagnostico" abre o formulário de diagnóstico. */
 export const heroCta = { label: "Quero mais clientes para minha oficina", href: "#diagnostico" };
