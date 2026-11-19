@@ -69,11 +69,11 @@ export const team: TeamMember[] = [
   { name: "Hiago Henrique", role: "Gestor de Tráfego", photo: "/images/equipe/hiago-henrique.jpg" },
   { name: "Matheus Martins", role: "Gestor de Tráfego", photo: "/images/equipe/matheus-martins.jpg" },
   { name: "Matheus Aurélio", role: "Web Designer", photo: "/images/equipe/matheus.jpg" },
-  { name: "Naiara Silva", role: "Designer", photo: "/images/equipe/naiara-silva.jpg" },
   { name: "João Pedro", role: "Designer", photo: "/images/equipe/joao-pedro.jpg" },
   { name: "Richard Martins", role: "Designer", photo: "/images/equipe/richard-martins.jpg" },
   { name: "Ryan Barbosa", role: "Videomaker", photo: "/images/equipe/ryan-barbosa.jpg" },
-  // Último da lista = primeiro à esquerda do Martins Junior quando o carrossel (circular) abre.
+  // Os dois últimos ficam à esquerda do Martins Junior quando o carrossel (circular) abre: Naiara e, colada nele, Daine.
+  { name: "Naiara Silva", role: "Designer", photo: "/images/equipe/naiara-silva.jpg" },
   { name: "Daine Silva", role: "Financeiro e Fundadora", photo: "/images/equipe/daine-silva.jpg" },
 ];
 
