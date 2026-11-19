@@ -58,13 +58,13 @@ export const aboutFacts = [
 // Carrossel da equipe (seção "Por que a Giraffe"). Fotos recortadas em retrato 4:5 (800×1000)
 // em public/images/equipe/, a partir dos originais em public/images/nossa-equipe/.
 // Para incluir alguém, acrescente um item; sem foto, o cartão mostra uma silhueta.
+// O carrossel abre no primeiro item, com o último à esquerda e o segundo à direita.
 // Não usar rostos gerados por IA como se fossem a equipe.
 export type TeamMember = { name: string; role: string; photo?: string };
 
 export const team: TeamMember[] = [
   { name: "Martins Junior", role: "CEO e Fundador", photo: "/images/equipe/martins-junior.jpg" },
   { name: "Alex Martins", role: "COO e Sócio Proprietário", photo: "/images/equipe/alex-martins.jpg" },
-  { name: "Daine Silva", role: "Financeiro e Fundadora", photo: "/images/equipe/daine-silva.jpg" },
   { name: "Jhennipher Martins", role: "Customer Success", photo: "/images/equipe/jhennipher-martins.jpg" },
   { name: "Hiago Henrique", role: "Gestor de Tráfego", photo: "/images/equipe/hiago-henrique.jpg" },
   { name: "Matheus Martins", role: "Gestor de Tráfego", photo: "/images/equipe/matheus-martins.jpg" },
@@ -73,6 +73,8 @@ export const team: TeamMember[] = [
   { name: "João Pedro", role: "Designer", photo: "/images/equipe/joao-pedro.jpg" },
   { name: "Richard Martins", role: "Designer", photo: "/images/equipe/richard-martins.jpg" },
   { name: "Ryan Barbosa", role: "Videomaker", photo: "/images/equipe/ryan-barbosa.jpg" },
+  // Último da lista = primeiro à esquerda do Martins Junior quando o carrossel (circular) abre.
+  { name: "Daine Silva", role: "Financeiro e Fundadora", photo: "/images/equipe/daine-silva.jpg" },
 ];
 
 export const faqs = [
